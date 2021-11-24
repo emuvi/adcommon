@@ -11,7 +11,7 @@
         "outDir": "build"
     },
     "files": [
-        "src/main.ts"
+        "src/all.ts"
     ],
     "exclude": [
         "node_modules",
