@@ -5,12 +5,13 @@
   "main": "./build/all.js",
   "types": "./types/all.d.ts",
   "scripts": {
-    "start": "bash -v test.sh"
+    "build": "bash -v build.sh"
   },
   "keywords": [],
   "author": "Éverton M. Vieira",
   "license": "LGPL-3.0-only",
   "dependencies": {
+    "qinpel-cps": "file:../qinpel-cps",
     "qinpel-res": "file:../qinpel-res"
   }
 }
