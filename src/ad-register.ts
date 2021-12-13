@@ -3,12 +3,12 @@ import { AdModel } from "./ad-model";
 
 export class AdRegister {
 
-    private _model: AdModel;
     private _title: string;
+    private _model: AdModel;
 
-    public constructor(table: string, title: string) {
-        this._model = new AdModel(table);
+    public constructor(title: string, table: string) {
         this._title = title;
+        this._model = new AdModel(table);
     }
 
     public addTab(title: string) {
@@ -19,7 +19,7 @@ export class AdRegister {
 
     }
 
-    public addField(field: AdField) {
+    public addView(title: string, field: AdField) {
         this._model.addField(field);
     }
 

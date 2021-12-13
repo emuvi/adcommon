@@ -49,6 +49,9 @@ def getOriginExports(origin: str) -> list[str]:
         identifier = getIdentifier(line, "export class ")
         if identifier:
             result.append(identifier)
+        identifier = getIdentifier(line, "export abstract class ")
+        if identifier:
+            result.append(identifier)
         identifier = getIdentifier(line, "export enum ")
         if identifier:
             result.append(identifier)

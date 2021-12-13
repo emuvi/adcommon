@@ -2,7 +2,10 @@ export { AdActions } from "./ad-actions";
 
 export { AdExpect } from "./ad-expect";
 
-export { AdField } from "./ad-field";
+export { AdField, AdFieldNewer } from "./ad-field";
+
+export { AdFilter, AdFilterItem, AdFilterMode, 
+         AdFilterNext } from "./ad-filter";
 
 export { AdModel } from "./ad-model";
 
