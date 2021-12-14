@@ -1,19 +1,19 @@
-export { AdModules } from "./ad-modules";
+export { AdExpect } from "./ad-expect";
 
 export { AdField, AdFieldNewer } from "./ad-field";
 
-export { AdFilter, AdFilterItem, AdFilterMode, 
-         AdFilterNext } from "./ad-filter";
+export { AdFilters, AdFilterItem, AdFilterMode, 
+         AdFilterUnion } from "./ad-filters";
 
-export { AdTools } from "./ad-tools";
+export { AdModel } from "./ad-model";
+
+export { AdModules } from "./ad-modules";
 
 export { AdOptions } from "./ad-options";
 
 export { AdRegister } from "./ad-register";
 
-export { AdExpect } from "./ad-expect";
+export { AdScope, AdScopes } from "./ad-scopes";
 
-export { AdActions } from "./ad-actions";
-
-export { AdModel } from "./ad-model";
+export { AdTools } from "./ad-tools";
 

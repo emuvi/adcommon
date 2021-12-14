@@ -1,6 +1,6 @@
 import { QinTools } from "qinpel-cps";
 import { AdField } from "./ad-field";
-import { AdFilter } from "./ad-filter"
+import { AdFilters } from "./ad-filters"
 
 export class AdModel {
 
@@ -20,15 +20,15 @@ export class AdModel {
         QinTools.qinpel();
     }
 
-    public search(filters: AdFilter) {
+    public search(filters: AdFilters) {
         QinTools.qinpel();
     }
 
-    public update(values: any, filters: AdFilter) {
+    public update(values: any, filters: AdFilters) {
         QinTools.qinpel();
     }
 
-    public delete(filters: AdFilter) {
+    public delete(filters: AdFilters) {
         QinTools.qinpel();
     }
 

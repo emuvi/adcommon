@@ -1,13 +1,13 @@
-import { AdActions } from "./ad-actions";
+import { AdFilters } from "./ad-filters";
 import { AdModules } from "./ad-modules";
 import { AdOptions } from "./ad-options";
-import { AdFilter } from "./ad-filter";
+import { AdScopes } from "./ad-scopes";
 
-function newAdOption(module: AdModules, action: AdActions, filter?: AdFilter) {
+function newAdOption(module: AdModules, scopes: AdScopes, filters?: AdFilters) {
     var result = {};
     result[AdOptions.MODULE] = module;
-    result[AdOptions.ACTION] = action;
-    result[AdOptions.FILTER] = filter;
+    result[AdOptions.SCOPES] = scopes;
+    result[AdOptions.FILTERS] = filters;
     return result;
 }
 
