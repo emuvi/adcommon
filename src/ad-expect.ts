@@ -1,33 +1,19 @@
-import { QinWaiter } from "qinpel-res";
-import { AdScopes } from "./ad-scopes";
+import { QinWaiters } from "qinpel-res";
+import { AdScopes } from "./ad-consts";
 import { AdFilters } from "./ad-filters";
 
 export class AdExpect {
 
     private _scopes: AdScopes;
     private _filters: AdFilters;
-    
-    private waiters: QinWaiter[] = [];
+    private _waiters: QinWaiters;
 
-    public constructor(scopes: AdScopes, filters?: AdFilters) {
-        this._scopes = scopes;
-        this._filters = filters;
+    public constructor(options: AdExpectOptions) {
+        this._scopes = options.scopes;
+        this._filters = options.filters;
+		this._waiters = options.waiters;
     }
 
-    public addWaiter(waiter: QinWaiter): AdExpect {
-        this.waiters.push(waiter);
-        return this;
-    }
-
-    public hasWaiter(): boolean {
-        return this.waiters.length > 0;
-    }
-
-    public sendWaiters(result: any) {
-        for (const waiter of this.waiters) {
-            waiter(result);
-        }
-    }
 
     /**
      * Getter scopes
@@ -45,4 +31,18 @@ export class AdExpect {
 		return this._filters;
 	}
 
+	/**
+	 * Getter waiters
+	 * @return {QinWaiters}
+	 */
+	public get waiters(): QinWaiters {
+		return this._waiters;
+	}
+
 }
+
+export type AdExpectOptions = {
+	scopes: AdScopes,
+	filters?: AdFilters,
+	waiters?: QinWaiters,
+};
