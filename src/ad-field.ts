@@ -2,16 +2,18 @@ import { QinMutants, QinMutantsArm, QinEdit } from "qinpel-cps";
 
 export class AdField {
 
+    private _title: string;
     private _key: boolean;
     private _name: string;
     private _kind: QinMutants;
     private _options: any;
 
 	constructor(newer: AdFieldNewer) {
-		this._key = newer.key ? true : false;
-		this._name = newer.name;
+        this._title = newer.title;
+        this._name = newer.name;
 		this._kind = newer.kind;
 		this._options = newer.options;
+		this._key = newer.key ? true : false;
 	}
 
     public newEdit(): QinEdit {
@@ -19,11 +21,11 @@ export class AdField {
     }
 
     /**
-     * Getter key
-     * @return {boolean}
+     * Getter title
+     * @return {string}
      */
-	public get key(): boolean {
-		return this._key;
+	public get title(): string {
+		return this._title;
 	}
 
     /**
@@ -50,11 +52,20 @@ export class AdField {
 		return this._options;
 	}
 
+    /**
+     * Getter key
+     * @return {boolean}
+     */
+	public get key(): boolean {
+		return this._key;
+	}
+
 }
 
 export type AdFieldNewer = {
-    key?: boolean,
+    title?: string,
     name: string,
     kind: QinMutants,
     options?: any,
+    key?: boolean,
 };

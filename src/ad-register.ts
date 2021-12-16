@@ -38,14 +38,14 @@ export class AdRegister extends QinPanel {
         this.line.install(this.column);
     }
 
-    public addView(title: string, field: AdField) {
+    public addView(field: AdField) {
         this._model.addField(field);
         if (this.line == null) {
             this.addLine();
         }
         const editor = QinMutantsArm.newEdit(field.kind, field.options);
-        if (title) {
-            const viewer = new QinField(title, editor);
+        if (field.title) {
+            const viewer = new QinField(field.title, editor);
             viewer.install(this.line);
         } else {
             editor.install(this.line);

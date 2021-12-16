@@ -1,3 +1,5 @@
+export type AdScopes = AdScope[];
+
 export enum AdScope {
     ALL = "all",
     SEARCH = "search",
@@ -5,4 +7,3 @@ export enum AdScope {
     EDIT = "edit",
     DELETE = "delete",
 }
-export type AdScopes = AdScope[];
