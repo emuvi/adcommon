@@ -4,9 +4,6 @@
   "description": "AdCommon is a library with all the common functionality of the AdMister applications.",
   "main": "./build/all.js",
   "types": "./types/all.d.ts",
-  "scripts": {
-    "build": "bash -v build.sh"
-  },
   "keywords": [],
   "author": "Éverton M. Vieira",
   "license": "LGPL-3.0-only",
