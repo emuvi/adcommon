@@ -1,7 +1,7 @@
 {
 	"name": "adcommon",
 	"version": "0.1.0",
-	"description": "AdCommon is a library for user applications with all the common functionality of the AdMister applications.",
+	"description": "AdCommon is a library for the Qinpel user applications with all the common functionality on the AdMister applications.",
 	"main": "./build/all.js",
 	"types": "./types/all.d.ts",
 	"keywords": [],
