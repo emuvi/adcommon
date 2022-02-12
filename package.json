@@ -1,14 +1,14 @@
 {
-  "name": "adcommon",
-  "version": "0.1.0",
-  "description": "AdCommon is a library with all the common functionality of the AdMister applications.",
-  "main": "./build/all.js",
-  "types": "./types/all.d.ts",
-  "keywords": [],
-  "author": "Éverton M. Vieira",
-  "license": "LGPL-3.0-only",
-  "dependencies": {
-    "qinpel-cps": "file:../qinpel-cps",
-    "qinpel-res": "file:../qinpel-res"
-  }
+	"name": "adcommon",
+	"version": "0.1.0",
+	"description": "AdCommon is a library for user applications with all the common functionality of the AdMister applications.",
+	"main": "./build/all.js",
+	"types": "./types/all.d.ts",
+	"keywords": [],
+	"author": "Éverton M. Vieira",
+	"license": "LGPL-3.0-only",
+	"dependencies": {
+		"qinpel-cps": "file:../qinpel-cps",
+		"qinpel-res": "file:../qinpel-res"
+	}
 }
