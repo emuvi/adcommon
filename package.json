@@ -1,12 +1,15 @@
 {
 	"name": "adcommon",
-	"version": "0.1.0",
+	"displayName": "AdCommon",
 	"description": "AdCommon is a library for the Qinpel user applications with all the common functionality on the AdMister applications.",
-	"main": "./build/all.js",
-	"types": "./types/all.d.ts",
 	"keywords": [],
+	"repository": "https://github.com/emuvi/adcommon",
 	"author": "Éverton M. Vieira",
 	"license": "LGPL-3.0-only",
+	"version": "0.1.0",
+	"main": "./build/all.js",
+	"types": "./types/all.d.ts",
+	
 	"dependencies": {
 		"qinpel-cps": "file:../qinpel-cps",
 		"qinpel-res": "file:../qinpel-res"
