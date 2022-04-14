@@ -1,61 +1,26 @@
-import {
-  QinColumn,
-  QinField,
-  QinLine,
-  QinMutantsArm,
-  QinPanel,
-  QinTabs,
-} from "qinpel-cps";
+import { QinColumn } from "qinpel-cps";
 import { AdExpect } from "./ad-expect";
 import { AdField } from "./ad-field";
 import { AdModel } from "./ad-model";
+import { AdRegBar } from "./ad-reg-bar";
+import { AdRegBody } from "./ad-reg-body";
+import { AdRegTable } from "./ad-reg-table";
 
-export class AdRegister extends QinPanel {
+export class AdRegister extends QinColumn {
   private _expect: AdExpect;
   private _model: AdModel;
 
-  private tabs: QinTabs = null;
-  private column: QinColumn = null;
-  private line: QinLine = null;
+  private _bar = new AdRegBar(this);
+  private _body = new AdRegBody(this);
+  private _table = new AdRegTable(this);
 
   public constructor(expect: AdExpect, table: string) {
     super();
     this._expect = expect;
     this._model = new AdModel(table);
-  }
-
-  public addTab(title: string) {
-    if (this.tabs == null) {
-      this.tabs = new QinTabs();
-      this.tabs.install(this);
-    }
-    this.column = new QinColumn();
-    this.tabs.addTab({ title, viewer: this.column });
-    this.line = new QinLine();
-    this.line.install(this.column);
-  }
-
-  public addLine() {
-    if (this.column == null) {
-      this.column = new QinColumn();
-      this.column.install(this);
-    }
-    this.line = new QinLine();
-    this.line.install(this.column);
-  }
-
-  public addView(field: AdField) {
-    this._model.addField(field);
-    if (this.line == null) {
-      this.addLine();
-    }
-    const editor = QinMutantsArm.newEdit(field.kind, field.options);
-    if (field.title) {
-      const viewer = new QinField(field.title, editor);
-      viewer.install(this.line);
-    } else {
-      editor.install(this.line);
-    }
+    this._bar.install(this);
+    this._body.install(this);
+    this._table.install(this);
   }
 
   public get expect(): AdExpect {
@@ -64,5 +29,17 @@ export class AdRegister extends QinPanel {
 
   public get model(): AdModel {
     return this._model;
+  }
+
+  public addTab(title: string) {
+    this._body.addTab(title);
+  }
+
+  public addLine() {
+    this._body.addLine();
+  }
+
+  public addView(field: AdField) {
+    this._body.addView(field);
   }
 }
