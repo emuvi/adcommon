@@ -7,7 +7,7 @@ export class AdField {
   private _kind: QinMutants;
   private _options: any;
 
-  constructor(newer: AdFieldNewer) {
+  constructor(newer: AdFieldSet) {
     this._title = newer.title;
     this._name = newer.name;
     this._kind = newer.kind;
@@ -40,7 +40,7 @@ export class AdField {
   }
 }
 
-export type AdFieldNewer = {
+export type AdFieldSet = {
   title?: string;
   name: string;
   kind: QinMutants;

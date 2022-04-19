@@ -2,7 +2,7 @@ import { QinColumn, QinField, QinLine, QinMutantsArm, QinPanel, QinTabs } from "
 import { AdField } from "./ad-field";
 import { AdRegister } from "./ad-register";
 
-export class AdRegBody extends QinPanel {
+export class AdRegEditor extends QinPanel {
   private _reg: AdRegister;
 
   private _tabs: QinTabs = null;
@@ -34,8 +34,7 @@ export class AdRegBody extends QinPanel {
     this._line.install(this._column);
   }
 
-  public addView(field: AdField) {
-    this._reg.model.addField(field);
+  public addField(field: AdField) {
     if (this._line == null) {
       this.addLine();
     }
