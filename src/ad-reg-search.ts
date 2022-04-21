@@ -2,16 +2,18 @@ import { QinBoolean, QinColumn, QinCombo, QinComboItem, QinLine, QinPanel, QinSt
 import { AdField } from "./ad-field";
 import { AdRegister } from "./ad-register";
 
-export class AdRegSearch extends QinColumn {
+export class AdRegSearch extends QinPanel {
   private _reg: AdRegister;
-  private _clauses: SearchClause[] = [];
+  private _lines = new QinColumn();
+  private _clauses = new Array<SearchClause>();
 
   public constructor(register: AdRegister) {
     super();
     this._reg = register;
+    this._lines.install(this);
     const first = new SearchClause();
     this._clauses.push(first);
-    first.install(this);
+    first.install(this._lines);
   }
 
   public addField(field: AdField) {

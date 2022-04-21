@@ -1,12 +1,11 @@
-import { QinPanel } from "qinpel-cps";
+import { QinTable } from "qinpel-cps";
 import { AdRegister } from "./ad-register";
 
-export class AdRegTable extends QinPanel {
+export class AdRegTable extends QinTable {
   private _reg: AdRegister;
 
   public constructor(register: AdRegister) {
     super();
     this._reg = register;
   }
-
 }
