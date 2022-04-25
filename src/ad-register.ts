@@ -1,4 +1,4 @@
-import { QinColumn, QinRow, QinStack } from "qinpel-cps";
+import { QinColumn, QinRow, QinSplitter, QinStack } from "qinpel-cps";
 import { AdScope } from "./ad-consts";
 import { AdExpect } from "./ad-expect";
 import { AdField } from "./ad-field";
@@ -15,8 +15,8 @@ export class AdRegister extends QinColumn {
 
   private _bar = new AdRegBar(this);
   private _viewSingle = new QinStack();
-  private _viewVertical = new QinColumn();
-  private _viewHorizontal = new QinRow();
+  private _viewVertical = new QinSplitter({horizontal: false});
+  private _viewHorizontal = new QinSplitter({horizontal: true});
   private _body = new QinStack();
   private _editor = new AdRegEditor(this);
   private _search = new AdRegSearch(this);
@@ -26,6 +26,9 @@ export class AdRegister extends QinColumn {
     super();
     this._expect = expect;
     this._model = new AdModel(table);
+    this._viewSingle.style.putAsFlexMax();
+    this._viewVertical.style.putAsFlexMax();
+    this._viewHorizontal.style.putAsFlexMax();
     this._bar.install(this);
     this._body.stack(this._editor);
     this._body.stack(this._search);
@@ -96,6 +99,8 @@ export class AdRegister extends QinColumn {
     this._viewVertical.install(this);
     this._body.install(this._viewVertical);
     this._table.install(this._viewVertical);
+    this._body.reDisplay();
+    this._table.reDisplay();
   }
 
   public viewHorizontal() {
@@ -104,6 +109,8 @@ export class AdRegister extends QinColumn {
     this._viewHorizontal.install(this);
     this._body.install(this._viewHorizontal);
     this._table.install(this._viewHorizontal);
+    this._body.reDisplay();
+    this._table.reDisplay();
   }
 }
 
