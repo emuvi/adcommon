@@ -1,25 +1,27 @@
-import {
-  QinAsset,
-  QinButton,
-  QinColumn,
-  QinIcon,
-  QinIconPick,
-  QinLabel,
-  QinLine,
-  QinPopup,
-} from "qinpel-cps";
+import { QinAsset, QinButton, QinIcon, QinIconPick, QinLine, QinPopup } from "qinpel-cps";
 import { AdRegister, AdRegMode } from "./ad-register";
 
 export class AdRegBar extends QinLine {
   private _reg: AdRegister;
 
   private _qinMenu = new QinButton({ icon: new QinIcon(QinAsset.FaceMenuLines) });
-  private _qinMenuView = new QinButton({ label: new QinLabel("View") });
-  private _qinMenuBody = new QinColumn({ items: [this._qinMenuView] });
+  private _qinMenuViewSingle = new QinButton({
+    icon: new QinIcon(QinAsset.FaceSplitNotView),
+  });
+  private _qinMenuViewVertical = new QinButton({
+    icon: new QinIcon(QinAsset.FaceSplitViewVertical),
+  });
+  private _qinMenuViewHorizontal = new QinButton({
+    icon: new QinIcon(QinAsset.FaceSplitViewHorizontal),
+  });
+  private _qinMenuBody = new QinLine({
+    items: [
+      this._qinMenuViewSingle,
+      this._qinMenuViewVertical,
+      this._qinMenuViewHorizontal,
+    ],
+  });
   private _qinPopup = new QinPopup(this._qinMenuBody);
-  private _qinMenuViewItem = new QinButton({ label: new QinLabel("Item") });
-  private _qinMenuViewBody = new QinColumn({ items: [this._qinMenuViewItem] });
-  private _qinPopupView = new QinPopup(this._qinMenuViewBody);
 
   private _qinMode = new QinIconPick();
   private _qinInsert = new QinIcon(QinAsset.FaceAdd);
@@ -36,7 +38,18 @@ export class AdRegBar extends QinLine {
   private initMenu() {
     this._qinMenu.install(this);
     this._qinMenu.addActionMain((_) => this._qinPopup.showOnParent(this._qinMenu));
-    this._qinMenuView.addActionMain((_) => this._qinPopupView.showOnParent(this._qinMenuView));
+    this._qinMenuViewSingle.addActionMain((_) => {
+      this._qinPopup.close();
+      this._reg.viewSingle();
+    });
+    this._qinMenuViewVertical.addActionMain((_) => {
+      this._qinPopup.close();
+      this._reg.viewVertical();
+    });
+    this._qinMenuViewHorizontal.addActionMain((_) => {
+      this._qinPopup.close();
+      this._reg.viewHorizontal();
+    });
   }
 
   private initMode() {

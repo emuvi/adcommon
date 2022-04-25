@@ -1,4 +1,5 @@
-import { QinColumn, QinStack } from "qinpel-cps";
+import { QinColumn, QinRow, QinStack } from "qinpel-cps";
+import { AdScope } from "./ad-consts";
 import { AdExpect } from "./ad-expect";
 import { AdField } from "./ad-field";
 import { AdModel } from "./ad-model";
@@ -10,8 +11,12 @@ import { AdRegTable } from "./ad-reg-table";
 export class AdRegister extends QinColumn {
   private _expect: AdExpect;
   private _model: AdModel;
+  private _regMode: AdRegMode;
 
   private _bar = new AdRegBar(this);
+  private _viewSingle = new QinStack();
+  private _viewVertical = new QinColumn();
+  private _viewHorizontal = new QinRow();
   private _body = new QinStack();
   private _editor = new AdRegEditor(this);
   private _search = new AdRegSearch(this);
@@ -22,10 +27,17 @@ export class AdRegister extends QinColumn {
     this._expect = expect;
     this._model = new AdModel(table);
     this._bar.install(this);
-    this._body.install(this);
     this._body.stack(this._editor);
     this._body.stack(this._search);
-    this._table.install(this);
+    if (
+      expect.scopes.find((scope) => scope === AdScope.ALL) ||
+      expect.scopes.find((scope) => scope === AdScope.INSERT)
+    ) {
+      this.changeMode(AdRegMode.INSERT);
+    } else {
+      this.changeMode(AdRegMode.SEARCH);
+    }
+    this.viewVertical();
   }
 
   public get expect(): AdExpect {
@@ -48,16 +60,50 @@ export class AdRegister extends QinColumn {
     this._model.addField(field);
     this._editor.addField(field);
     this._search.addField(field);
-    let heads = this._table.addHead(field.title);
+    this._table.addHead(field.title);
   }
 
-  public tryChangeMode(mode: AdRegMode) {
+  private changeMode(mode: AdRegMode) {
     if (mode === AdRegMode.SEARCH) {
       this._body.show(this._search);
     } else {
       this._body.show(this._editor);
     }
     this._bar.setMode(mode);
+    this._regMode = mode;
+  }
+
+  public tryChangeMode(mode: AdRegMode) {
+    this.changeMode(mode);
+  }
+
+  public viewSingle() {
+    this._viewVertical.unInstall();
+    this._viewHorizontal.unInstall();
+    this._viewSingle.install(this);
+    this._body.install(this._viewSingle);
+    this._table.install(this._viewSingle);
+    if (this._regMode === AdRegMode.SEARCH) {
+      this._viewSingle.show(this._table);
+    } else {
+      this._viewSingle.show(this._body);
+    }
+  }
+
+  public viewVertical() {
+    this._viewSingle.unInstall();
+    this._viewHorizontal.unInstall();
+    this._viewVertical.install(this);
+    this._body.install(this._viewVertical);
+    this._table.install(this._viewVertical);
+  }
+
+  public viewHorizontal() {
+    this._viewSingle.unInstall();
+    this._viewVertical.unInstall();
+    this._viewHorizontal.install(this);
+    this._body.install(this._viewHorizontal);
+    this._table.install(this._viewHorizontal);
   }
 }
 
