@@ -11,6 +11,14 @@ export class AdModel {
     this._fields = [];
   }
 
+  public get table(): string {
+    return this._table;
+  }
+
+  public get fields(): AdField[] {
+    return this._fields;
+  }
+
   public addField(field: AdField) {
     this._fields.push(field);
   }

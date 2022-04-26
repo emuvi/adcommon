@@ -1,5 +1,5 @@
 import { QinColumn, QinRow, QinSplitter, QinStack } from "qinpel-cps";
-import { AdScope } from "./ad-consts";
+import { AdModule, AdScope } from "./ad-consts";
 import { AdExpect } from "./ad-expect";
 import { AdField } from "./ad-field";
 import { AdModel } from "./ad-model";
@@ -9,6 +9,7 @@ import { AdRegSearch } from "./ad-reg-search";
 import { AdRegTable } from "./ad-reg-table";
 
 export class AdRegister extends QinColumn {
+  private _module: AdModule;
   private _expect: AdExpect;
   private _model: AdModel;
   private _regMode: AdRegMode;
@@ -22,10 +23,11 @@ export class AdRegister extends QinColumn {
   private _search = new AdRegSearch(this);
   private _table = new AdRegTable(this);
 
-  public constructor(expect: AdExpect, table: string) {
+  public constructor(module: AdModule, expect: AdExpect) {
     super();
+    this._module = module;
     this._expect = expect;
-    this._model = new AdModel(table);
+    this._model = new AdModel(this._module.data);
     this._viewSingle.style.putAsFlexMax();
     this._viewVertical.style.putAsFlexMax();
     this._viewHorizontal.style.putAsFlexMax();
