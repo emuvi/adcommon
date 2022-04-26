@@ -1,6 +1,8 @@
 export { AdOptions } from './ad-consts';
 export { AdScopes } from './ad-consts';
 export { AdScope } from './ad-consts';
+export { AdModule } from './ad-consts';
+export { isSameModule } from './ad-consts';
 export { AdModules } from './ad-consts';
 export { AdExpect } from './ad-expect';
 export { AdExpectOptions } from './ad-expect';
@@ -10,6 +12,9 @@ export { AdFilters } from './ad-filters';
 export { AdFilterItem } from './ad-filters';
 export { AdFilterMode } from './ad-filters';
 export { AdFilterUnion } from './ad-filters';
+export { AdMenu } from './ad-menu';
+export { AdMenuItem } from './ad-menu';
+export { menuStartUp } from './ad-menu';
 export { AdModel } from './ad-model';
 export { AdRegBar } from './ad-reg-bar';
 export { AdRegEditor } from './ad-reg-editor';

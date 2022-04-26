@@ -23,6 +23,10 @@ export type AdModule = {
   data: string;
 };
 
+export function isSameModule(one: AdModule, two: AdModule): boolean {
+  return one?.app == two?.app && one?.title == two?.title;
+}
+
 export class AdModules {
   static BUSINESS: AdModule = {
     app: "adpeople",
