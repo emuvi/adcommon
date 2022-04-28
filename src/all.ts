@@ -22,4 +22,7 @@ export { AdRegSearch } from './ad-reg-search';
 export { AdRegTable } from './ad-reg-table';
 export { AdRegister } from './ad-register';
 export { AdRegMode } from './ad-register';
+export { OnChangeMode } from './ad-register';
+export { AdRegView } from './ad-register';
+export { OnChangeView } from './ad-register';
 export { AdTools } from './ad-tools';
