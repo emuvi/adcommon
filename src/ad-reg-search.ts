@@ -1,19 +1,18 @@
 import {
   QinAsset,
-  QinBoolean,
   QinButton,
   QinColumn,
   QinCombo,
   QinComboItem,
   QinIcon,
   QinLine,
-  QinPanel,
+  QinScroll,
   QinString,
 } from "qinpel-cps";
 import { AdField } from "./ad-field";
 import { AdRegister } from "./ad-register";
 
-export class AdRegSearch extends QinPanel {
+export class AdRegSearch extends QinScroll {
   private _reg: AdRegister;
   private _lines = new QinColumn();
   private _clauses = new Array<SearchClause>();
@@ -87,6 +86,9 @@ class SearchClause extends QinLine {
     this._del.addActionMain((_) => {
       this._dad.delClause(this);
     });
+    this.style.putAsPaddingBottom(4);
+    this.style.putAsBorderBottom(2, "#bbb");
+    this.style.putAsMarginBottom(4);
   }
 
   public addField(item: QinComboItem) {

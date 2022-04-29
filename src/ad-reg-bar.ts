@@ -63,6 +63,9 @@ export class AdRegBar extends QinLine {
     this.initMode();
     this.initMove();
     this.initMark();
+    this.style.putAsPaddingBottom(2);
+    this.style.putAsBorderBottom(2, "#999");
+    this.style.putAsMarginBottom(2);
   }
 
   private initMenu() {
@@ -124,12 +127,33 @@ export class AdRegBar extends QinLine {
       switch (mode) {
         case AdRegMode.INSERT:
           this._qinMode.setData(this._qinInsert.asset);
+          this._qinFirst.unDisplay();
+          this._qinPrior.unDisplay();
+          this._qinNext.unDisplay();
+          this._qinLast.unDisplay();
+          this._qinDelete.unDisplay();
+          this._qinConfirm.reDisplay();
+          this._qinCancel.reDisplay();
           break;
         case AdRegMode.SEARCH:
           this._qinMode.setData(this._qinSearch.asset);
+          this._qinFirst.reDisplay();
+          this._qinPrior.reDisplay();
+          this._qinNext.reDisplay();
+          this._qinLast.reDisplay();
+          this._qinDelete.unDisplay();
+          this._qinConfirm.unDisplay();
+          this._qinCancel.unDisplay();
           break;
         case AdRegMode.MUTATE:
           this._qinMode.setData(this._qinMutate.asset);
+          this._qinFirst.unDisplay();
+          this._qinPrior.unDisplay();
+          this._qinNext.unDisplay();
+          this._qinLast.unDisplay();
+          this._qinDelete.reDisplay();
+          this._qinConfirm.reDisplay();
+          this._qinCancel.reDisplay();
           break;
       }
     }
