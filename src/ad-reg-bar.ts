@@ -47,11 +47,22 @@ export class AdRegBar extends QinLine {
     icons: [this._qinInsert, this._qinSearch, this._qinMutate],
   });
 
+  private _qinFirst = new QinButton({ icon: new QinIcon(QinAsset.FaceRUpChevronPush) });
+  private _qinPrior = new QinButton({ icon: new QinIcon(QinAsset.FaceRLeftChevronPush) });
+  private _qinNext = new QinButton({ icon: new QinIcon(QinAsset.FaceRRightChevronPush) });
+  private _qinLast = new QinButton({ icon: new QinIcon(QinAsset.FaceRDownChevronPush) });
+
+  private _qinDelete = new QinButton({ icon: new QinIcon(QinAsset.FaceTrash) });
+  private _qinConfirm = new QinButton({ icon: new QinIcon(QinAsset.FaceConfirm) });
+  private _qinCancel = new QinButton({ icon: new QinIcon(QinAsset.FaceCancel) });
+
   public constructor(register: AdRegister) {
     super();
     this._reg = register;
     this.initMenu();
     this.initMode();
+    this.initMove();
+    this.initMark();
   }
 
   private initMenu() {
@@ -85,6 +96,26 @@ export class AdRegBar extends QinLine {
     this._qinSearch.addActionMain((_) => this._reg.tryChangeMode(AdRegMode.SEARCH));
     this._qinMutate.addActionMain((_) => this._reg.tryChangeMode(AdRegMode.MUTATE));
     this._reg.addOnChangeMode((mode) => this.setMode(mode));
+  }
+
+  private initMove() {
+    this._qinFirst.install(this);
+    this._qinFirst.addActionMain((_) => alert("first"));
+    this._qinPrior.install(this);
+    this._qinPrior.addActionMain((_) => alert("prior"));
+    this._qinNext.install(this);
+    this._qinNext.addActionMain((_) => alert("next"));
+    this._qinLast.install(this);
+    this._qinLast.addActionMain((_) => alert("last"));
+  }
+
+  private initMark() {
+    this._qinDelete.install(this);
+    this._qinDelete.addActionMain((_) => alert("delete"));
+    this._qinConfirm.install(this);
+    this._qinConfirm.addActionMain((_) => alert("confirm"));
+    this._qinCancel.install(this);
+    this._qinCancel.addActionMain((_) => alert("cancel"));
   }
 
   private setMode(mode: AdRegMode) {
