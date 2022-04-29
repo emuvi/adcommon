@@ -9,7 +9,7 @@ import {
   QinTools,
 } from "qinpel-cps";
 import { QinGrandeur, QinWaiters } from "qinpel-res";
-import { AdModule, isSameModule, AdOptions, AdScope } from "./ad-consts";
+import { AdModule, AdOptions, AdScope, isSameModule } from "./ad-consts";
 import { AdExpect } from "./ad-expect";
 import { AdRegister } from "./ad-register";
 import { AdTools } from "./ad-tools";
@@ -27,7 +27,7 @@ export class AdMenu extends QinColumn {
       });
       button.putAsColumn();
       button.addActionMain((_) => {
-        this.qinpel.manager.newFrame(
+        this.qinpel.chief.newFrame(
           item.module.title,
           item.module.app,
           AdTools.newAdOption(item.module, [AdScope.ALL])
@@ -85,5 +85,3 @@ export function menuStartUp(menus: AdMenuItem[]): QinBase {
   }
   return new AdMenu(menus);
 }
-
-
