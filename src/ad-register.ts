@@ -14,9 +14,7 @@ export class AdRegister extends QinColumn {
   private _model: AdModel;
 
   private _regMode: AdRegMode;
-  private _onChangeMode = new Array<OnChangeMode>();
   private _regView: AdRegView;
-  private _onChangeView = new Array<OnChangeView>();
 
   private _regBar = new AdRegBar(this);
   private _viewSingle = new QinStack();
@@ -27,8 +25,9 @@ export class AdRegister extends QinColumn {
   private _bodySearch = new AdRegSearch(this);
   private _table = new AdRegTable(this);
 
-  public;
-  constructor(module: AdModule, expect: AdExpect) {
+  private _listener = new Array<AdRegListener>();
+
+  public constructor(module: AdModule, expect: AdExpect) {
     super();
     this._module = module;
     this._expect = expect;
@@ -83,23 +82,19 @@ export class AdRegister extends QinColumn {
       this._body.show(this._bodyEditor);
     }
     this._regMode = mode;
-    this._onChangeMode.forEach((callback) => callback(this._regMode));
+    this.callDidListeners(AdRegEvent.CHANGE_MODE, { newValue: this._regMode });
   }
 
-  public tryChangeMode(mode: AdRegMode): boolean {
-    this.changeMode(mode);
-    return true;
-  }
-
-  public addOnChangeMode(callback: OnChangeMode) {
-    this._onChangeMode.push(callback);
-  }
-
-  public delOnChangeMode(callback: OnChangeMode) {
-    let index = this._onChangeMode.indexOf(callback);
-    if (index >= 0) {
-      this._onChangeMode.splice(index, 1);
+  public tryChangeMode(mode: AdRegMode): AdRegTryCancel {
+    let cancel = this.callTryListeners(AdRegEvent.CHANGE_MODE, {
+      oldValue: this._regMode,
+      setValue: mode,
+    });
+    if (cancel) {
+      return cancel;
     }
+    this.changeMode(mode);
+    return null;
   }
 
   public get mode(): AdRegMode {
@@ -118,7 +113,7 @@ export class AdRegister extends QinColumn {
       this._viewSingle.show(this._body);
     }
     this._regView = AdRegView.SINGLE;
-    this._onChangeView.forEach((callback) => callback(this._regView));
+    this.callDidListeners(AdRegEvent.CHANGE_VIEW, { newValue: this._regView });
   }
 
   public viewVertical() {
@@ -130,7 +125,7 @@ export class AdRegister extends QinColumn {
     this._body.reDisplay();
     this._table.reDisplay();
     this._regView = AdRegView.VERTICAL;
-    this._onChangeView.forEach((callback) => callback(this._regView));
+    this.callDidListeners(AdRegEvent.CHANGE_VIEW, { newValue: this._regView });
   }
 
   public viewHorizontal() {
@@ -142,22 +137,46 @@ export class AdRegister extends QinColumn {
     this._body.reDisplay();
     this._table.reDisplay();
     this._regView = AdRegView.HORIZONTAL;
-    this._onChangeView.forEach((callback) => callback(this._regView));
-  }
-
-  public addOnChangeView(callback: OnChangeView) {
-    this._onChangeView.push(callback);
-  }
-
-  public delOnChangeView(callback: OnChangeView) {
-    let index = this._onChangeView.indexOf(callback);
-    if (index >= 0) {
-      this._onChangeView.splice(index, 1);
-    }
+    this.callDidListeners(AdRegEvent.CHANGE_VIEW, { newValue: this._regView });
   }
 
   public get view(): AdRegView {
     return this._regView;
+  }
+
+  public addListener(listener: AdRegListener) {
+    this._listener.push(listener);
+  }
+
+  public delListener(listener: AdRegListener) {
+    var index = this._listener.indexOf(listener);
+    if (index >= 0) {
+      this._listener.splice(index, 1);
+    }
+  }
+
+  private callTryListeners(event: AdRegEvent, value: AdRegTryChange): AdRegTryCancel {
+    this._listener.forEach((listen) => {
+      if (listen.event === event) {
+        if (listen.onTry) {
+          let cancel = listen.onTry(value);
+          if (cancel) {
+            return cancel;
+          }
+        }
+      }
+    });
+    return null;
+  }
+
+  private callDidListeners(event: AdRegEvent, value: AdRegDidChange) {
+    this._listener.forEach((listen) => {
+      if (listen.event === event) {
+        if (listen.onDid) {
+          listen.onDid(value);
+        }
+      }
+    });
   }
 
   public focusBody() {
@@ -181,12 +200,35 @@ export enum AdRegMode {
   MUTATE = "mutate",
 }
 
-export type OnChangeMode = (mode: AdRegMode) => void;
-
 export enum AdRegView {
   SINGLE = "insert",
   VERTICAL = "search",
   HORIZONTAL = "mutate",
 }
 
-export type OnChangeView = (view: AdRegView) => void;
+export enum AdRegEvent {
+  CHANGE_MODE = "CHANGE_MODE",
+  CHANGE_VIEW = "CHANGE_VIEW",
+}
+
+export type AdRegTryChange = {
+  oldValue: any;
+  setValue: any;
+};
+
+export type AdRegTryCancel = {
+  why: string;
+};
+
+export type AdRegDidChange = {
+  newValue: any;
+};
+
+export type AdRegTryCaller = (values: AdRegTryChange) => AdRegTryCancel;
+export type AdRegDidCaller = (values: AdRegDidChange) => void;
+
+export type AdRegListener = {
+  event: AdRegEvent;
+  onTry?: AdRegTryCaller;
+  onDid?: AdRegDidCaller;
+};

@@ -7,7 +7,7 @@ import {
   QinLine,
   QinPopup,
 } from "qinpel-cps";
-import { AdRegister, AdRegMode } from "./ad-register";
+import { AdRegEvent, AdRegister, AdRegMode } from "./ad-register";
 
 export class AdRegBar extends QinLine {
   private _reg: AdRegister;
@@ -98,7 +98,10 @@ export class AdRegBar extends QinLine {
     this._qinInsert.addActionMain((_) => this._reg.tryChangeMode(AdRegMode.INSERT));
     this._qinSearch.addActionMain((_) => this._reg.tryChangeMode(AdRegMode.SEARCH));
     this._qinMutate.addActionMain((_) => this._reg.tryChangeMode(AdRegMode.MUTATE));
-    this._reg.addOnChangeMode((mode) => this.setMode(mode));
+    this._reg.addListener({
+      event: AdRegEvent.CHANGE_MODE,
+      onDid: (values) => this.setMode(values.newValue),
+    });
   }
 
   private initMove() {
