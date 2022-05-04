@@ -3,16 +3,16 @@ import { AdField } from "./ad-field";
 import { AdFilters } from "./ad-filters";
 
 export class AdModel {
-  private _table: string;
+  private _registry: AdRegistry;
   private _fields: AdField[];
 
-  public constructor(table: string) {
-    this._table = table;
+  public constructor(registry: AdRegistry) {
+    this._registry = registry;
     this._fields = [];
   }
 
-  public get table(): string {
-    return this._table;
+  public get registry(): AdRegistry {
+    return this._registry;
   }
 
   public get fields(): AdField[] {
@@ -23,7 +23,7 @@ export class AdModel {
     this._fields.push(field);
   }
 
-  public insert(values: any) {
+  public insert() {
     QinTools.qinpel();
   }
 
@@ -31,7 +31,7 @@ export class AdModel {
     QinTools.qinpel();
   }
 
-  public update(values: any, filters: AdFilters) {
+  public update(filters: AdFilters) {
     QinTools.qinpel();
   }
 
@@ -39,3 +39,11 @@ export class AdModel {
     QinTools.qinpel();
   }
 }
+
+export type AdRegistry = {
+  base: string;
+  catalog?: string;
+  schema?: string;
+  name?: string;
+  alias?: string;
+};

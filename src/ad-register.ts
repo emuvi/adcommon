@@ -2,7 +2,7 @@ import { QinColumn, QinSplitter, QinStack } from "qinpel-cps";
 import { AdModule, AdScope } from "./ad-consts";
 import { AdExpect } from "./ad-expect";
 import { AdField } from "./ad-field";
-import { AdModel } from "./ad-model";
+import { AdModel, AdRegistry } from "./ad-model";
 import { AdRegBar } from "./ad-reg-bar";
 import { AdRegEditor } from "./ad-reg-editor";
 import { AdRegSearch } from "./ad-reg-search";
@@ -10,11 +10,14 @@ import { AdRegTable } from "./ad-reg-table";
 
 export class AdRegister extends QinColumn {
   private _module: AdModule;
+  private _registry: AdRegistry;
   private _expect: AdExpect;
   private _model: AdModel;
 
   private _regMode: AdRegMode;
   private _regView: AdRegView;
+
+  private _listener = new Array<AdRegListener>();
 
   private _regBar = new AdRegBar(this);
   private _viewSingle = new QinStack();
@@ -25,13 +28,12 @@ export class AdRegister extends QinColumn {
   private _bodySearch = new AdRegSearch(this);
   private _table = new AdRegTable(this);
 
-  private _listener = new Array<AdRegListener>();
-
-  public constructor(module: AdModule, expect: AdExpect) {
+  public constructor(module: AdModule, registry: AdRegistry, expect: AdExpect) {
     super();
     this._module = module;
+    this._registry = registry;
     this._expect = expect;
-    this._model = new AdModel(this._module.data);
+    this._model = new AdModel(registry);
     this._viewSingle.style.putAsFlexMax();
     this._viewVertical.style.putAsFlexMax();
     this._viewHorizontal.style.putAsFlexMax();
@@ -50,6 +52,14 @@ export class AdRegister extends QinColumn {
     this._regBar.tabIndex = 0;
     this._body.tabIndex = 1;
     this._table.tabIndex = 2;
+  }
+
+  public get module(): AdModule {
+    return this._module;
+  }
+
+  public get registry(): AdRegistry {
+    return this._expect;
   }
 
   public get expect(): AdExpect {
@@ -99,6 +109,34 @@ export class AdRegister extends QinColumn {
 
   public get mode(): AdRegMode {
     return this._regMode;
+  }
+
+  public tryGoFirst(): void {
+    throw new Error("Method not implemented.");
+  }
+
+  public tryGoPrior(): void {
+    throw new Error("Method not implemented.");
+  }
+
+  public tryGoNext(): void {
+    throw new Error("Method not implemented.");
+  }
+
+  public tryGoLast(): void {
+    throw new Error("Method not implemented.");
+  }
+
+  public tryDelete(): void {
+    throw new Error("Method not implemented.");
+  }
+
+  public tryConfirm(): void {
+    throw new Error("Method not implemented.");
+  }
+
+  public tryCancel(): void {
+    throw new Error("Method not implemented.");
   }
 
   public viewSingle() {

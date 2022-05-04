@@ -1,4 +1,4 @@
-import { QinMutants, QinMutantsArm, QinEdit } from "qinpel-cps";
+import { QinEdit, QinMutants, QinMutantsArm } from "qinpel-cps";
 
 export class AdField {
   private _title: string;
@@ -6,6 +6,8 @@ export class AdField {
   private _name: string;
   private _kind: QinMutants;
   private _options: any;
+
+  private _edit: QinEdit;
 
   constructor(newer: AdFieldSet) {
     this._title = newer.title;
@@ -37,6 +39,14 @@ export class AdField {
 
   public get key(): boolean {
     return this._key;
+  }
+
+  public get edit(): QinEdit {
+    return this._edit;
+  }
+
+  public set edit(editor: QinEdit) {
+    this._edit = editor;
   }
 }
 

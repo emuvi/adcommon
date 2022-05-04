@@ -14,6 +14,7 @@ function GetName(found_line)
         result = result[3]
     end
     if Liz.contains(result, "(") then result = Liz.split(result, "(")[1] end
+    if Liz.contains(result, "<") then result = Liz.split(result, "<")[1] end
     return result
 end
 

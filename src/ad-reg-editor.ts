@@ -1,4 +1,11 @@
-import { QinColumn, QinField, QinLine, QinMutantsArm, QinPanel, QinTabs } from "qinpel-cps";
+import {
+  QinColumn,
+  QinField,
+  QinLine,
+  QinMutantsArm,
+  QinPanel,
+  QinTabs,
+} from "qinpel-cps";
 import { AdField } from "./ad-field";
 import { AdRegister } from "./ad-register";
 
@@ -39,9 +46,10 @@ export class AdRegEditor extends QinPanel {
       this.addLine();
     }
     const editor = QinMutantsArm.newEdit(field.kind, field.options);
+    field.edit = editor;
     if (field.title) {
-      const viewer = new QinField(field.title, editor);
-      viewer.install(this._line);
+      const titled = new QinField(field.title, editor);
+      titled.install(this._line);
     } else {
       editor.install(this._line);
     }

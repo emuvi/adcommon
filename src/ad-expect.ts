@@ -7,7 +7,7 @@ export class AdExpect {
   private _filters: AdFilters;
   private _waiters: QinWaiters;
 
-  public constructor(options: AdExpectOptions) {
+  public constructor(options: AdExpectSet) {
     this._scopes = options.scopes;
     this._filters = options.filters;
     this._waiters = options.waiters;
@@ -26,7 +26,7 @@ export class AdExpect {
   }
 }
 
-export type AdExpectOptions = {
+export type AdExpectSet = {
   scopes: AdScopes;
   filters?: AdFilters;
   waiters?: QinWaiters;

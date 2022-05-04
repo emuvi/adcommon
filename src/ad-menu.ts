@@ -59,10 +59,12 @@ export class AdMenu extends QinColumn {
   }
 }
 
+export type AdMenuAct<T extends QinBase> = new (module: AdModule, expect: AdExpect) => T;
+
 export type AdMenuItem = {
   group?: string;
   module: AdModule;
-  Action: typeof AdRegister;
+  register?: AdMenuAct<AdRegister>;
 };
 
 export function menuStartUp(menus: AdMenuItem[]): QinBase {
@@ -79,7 +81,11 @@ export function menuStartUp(menus: AdMenuItem[]): QinBase {
             QinTools.qinpel().frame.sendWaiters(result);
           }),
         });
-        return new menu.Action(module, expect);
+        if (menu.register) {
+          return new menu.register(menu.module, expect);
+        } else {
+          throw new Error("No menu action defined");
+        }
       }
     }
   }
