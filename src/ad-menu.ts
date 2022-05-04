@@ -27,12 +27,12 @@ export class AdMenu extends QinColumn {
       });
       button.putAsColumn();
       button.addActionMain((_) => {
-        this.qinpel.chief.newFrame(
+        this.qinpel.chief.newJobber(
           item.module.title,
           item.module.app,
           AdTools.newAdOption(item.module, [AdScope.ALL])
         );
-        this.qinpel.frame.close();
+        this.qinpel.jobbed.close();
       });
       line.put(button);
     }
@@ -68,9 +68,9 @@ export type AdMenuItem = {
 };
 
 export function menuStartUp(menus: AdMenuItem[]): QinBase {
-  const module = QinTools.qinpel().frame.getOption(AdOptions.MODULE);
-  const scopes = QinTools.qinpel().frame.getOption(AdOptions.SCOPES);
-  const filters = QinTools.qinpel().frame.getOption(AdOptions.FILTERS);
+  const module = QinTools.qinpel().jobbed.getOption(AdOptions.MODULE);
+  const scopes = QinTools.qinpel().jobbed.getOption(AdOptions.SCOPES);
+  const filters = QinTools.qinpel().jobbed.getOption(AdOptions.FILTERS);
   if (module) {
     for (const menu of menus) {
       if (isSameModule(menu.module, module)) {
@@ -78,7 +78,7 @@ export function menuStartUp(menus: AdMenuItem[]): QinBase {
           scopes,
           filters,
           waiters: new QinWaiters().addWaiter((result) => {
-            QinTools.qinpel().frame.sendWaiters(result);
+            QinTools.qinpel().jobbed.sendWaiters(result);
           }),
         });
         if (menu.register) {

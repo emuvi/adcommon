@@ -59,7 +59,7 @@ export class AdRegister extends QinColumn {
   }
 
   public get registry(): AdRegistry {
-    return this._expect;
+    return this._registry;
   }
 
   public get expect(): AdExpect {
