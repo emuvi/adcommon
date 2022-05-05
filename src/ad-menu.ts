@@ -6,7 +6,7 @@ import {
   QinLabel,
   QinLine,
   QinTitled,
-  QinTools,
+  QinTool,
 } from "qinpel-cps";
 import { QinGrandeur, QinWaiters } from "qinpel-res";
 import { AdModule, AdOptions, AdScope, isSameModule } from "./ad-consts";
@@ -68,9 +68,9 @@ export type AdMenuItem = {
 };
 
 export function menuStartUp(menus: AdMenuItem[]): QinBase {
-  const module = QinTools.qinpel().jobbed.getOption(AdOptions.MODULE);
-  const scopes = QinTools.qinpel().jobbed.getOption(AdOptions.SCOPES);
-  const filters = QinTools.qinpel().jobbed.getOption(AdOptions.FILTERS);
+  const module = QinTool.qinpel.jobbed.getOption(AdOptions.MODULE);
+  const scopes = QinTool.qinpel.jobbed.getOption(AdOptions.SCOPES);
+  const filters = QinTool.qinpel.jobbed.getOption(AdOptions.FILTERS);
   if (module) {
     for (const menu of menus) {
       if (isSameModule(menu.module, module)) {
@@ -78,7 +78,7 @@ export function menuStartUp(menus: AdMenuItem[]): QinBase {
           scopes,
           filters,
           waiters: new QinWaiters().addWaiter((result) => {
-            QinTools.qinpel().jobbed.sendWaiters(result);
+            QinTool.qinpel.jobbed.sendWaiters(result);
           }),
         });
         if (menu.register) {

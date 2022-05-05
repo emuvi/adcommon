@@ -1,18 +1,18 @@
-import { QinTools } from "qinpel-cps";
 import { AdField } from "./ad-field";
-import { AdFilters } from "./ad-filters";
+import { AdRegister } from "./ad-register";
+import { AdInsert, AdValued } from "./ad-swap";
 
 export class AdModel {
-  private _registry: AdRegistry;
+  private _register: AdRegister;
   private _fields: AdField[];
 
-  public constructor(registry: AdRegistry) {
-    this._registry = registry;
+  public constructor(register: AdRegister) {
+    this._register = register;
     this._fields = [];
   }
 
-  public get registry(): AdRegistry {
-    return this._registry;
+  public get register(): AdRegister {
+    return this._register;
   }
 
   public get fields(): AdField[] {
@@ -23,27 +23,45 @@ export class AdModel {
     this._fields.push(field);
   }
 
-  public insert() {
-    QinTools.qinpel();
+  public tryGoFirst() {
+    throw new Error("Method not implemented.");
   }
 
-  public search(filters: AdFilters) {
-    QinTools.qinpel();
+  public tryGoPrior() {
+    throw new Error("Method not implemented.");
   }
 
-  public update(filters: AdFilters) {
-    QinTools.qinpel();
+  public tryGoNext() {
+    throw new Error("Method not implemented.");
   }
 
-  public delete(filters: AdFilters) {
-    QinTools.qinpel();
+  public tryGoLast() {
+    throw new Error("Method not implemented.");
+  }
+
+  public tryDelete() {
+    throw new Error("Method not implemented.");
+  }
+
+  public tryConfirm() {
+    let valueds = new Array<AdValued>();
+    for (let field of this._fields) {
+      valueds.push({
+        name: field.name,
+        type: field.edit.getNature(),
+        data: field.edit.getData(),
+      });
+    }
+    let insert = {
+      registry: this.register.registry,
+      valueds: valueds,
+    } as AdInsert;
+    this.register.qinpel.chief.talk.post("/reg/new", insert).then((res) => {
+      console.log(res);
+    });
+  }
+
+  public tryCancel() {
+    throw new Error("Method not implemented.");
   }
 }
-
-export type AdRegistry = {
-  base: string;
-  catalog?: string;
-  schema?: string;
-  name?: string;
-  alias?: string;
-};

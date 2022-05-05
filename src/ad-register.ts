@@ -2,11 +2,12 @@ import { QinColumn, QinSplitter, QinStack } from "qinpel-cps";
 import { AdModule, AdScope } from "./ad-consts";
 import { AdExpect } from "./ad-expect";
 import { AdField } from "./ad-field";
-import { AdModel, AdRegistry } from "./ad-model";
+import { AdModel } from "./ad-model";
 import { AdRegBar } from "./ad-reg-bar";
 import { AdRegEditor } from "./ad-reg-editor";
 import { AdRegSearch } from "./ad-reg-search";
 import { AdRegTable } from "./ad-reg-table";
+import { AdRegistry } from "./ad-swap";
 
 export class AdRegister extends QinColumn {
   private _module: AdModule;
@@ -33,7 +34,7 @@ export class AdRegister extends QinColumn {
     this._module = module;
     this._registry = registry;
     this._expect = expect;
-    this._model = new AdModel(registry);
+    this._model = new AdModel(this);
     this._viewSingle.style.putAsFlexMax();
     this._viewVertical.style.putAsFlexMax();
     this._viewHorizontal.style.putAsFlexMax();
@@ -111,32 +112,32 @@ export class AdRegister extends QinColumn {
     return this._regMode;
   }
 
-  public tryGoFirst(): void {
-    throw new Error("Method not implemented.");
+  public tryGoFirst() {
+    this._model.tryGoFirst();
   }
 
-  public tryGoPrior(): void {
-    throw new Error("Method not implemented.");
+  public tryGoPrior() {
+    this._model.tryGoPrior();
   }
 
-  public tryGoNext(): void {
-    throw new Error("Method not implemented.");
+  public tryGoNext() {
+    this._model.tryGoNext();
   }
 
-  public tryGoLast(): void {
-    throw new Error("Method not implemented.");
+  public tryGoLast() {
+    this._model.tryGoLast();
   }
 
-  public tryDelete(): void {
-    throw new Error("Method not implemented.");
+  public tryDelete() {
+    this._model.tryDelete();
   }
 
-  public tryConfirm(): void {
-    throw new Error("Method not implemented.");
+  public tryConfirm() {
+    this._model.tryConfirm();
   }
 
-  public tryCancel(): void {
-    throw new Error("Method not implemented.");
+  public tryCancel() {
+    this._model.tryCancel();
   }
 
   public viewSingle() {
