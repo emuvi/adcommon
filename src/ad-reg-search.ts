@@ -106,8 +106,8 @@ class SearchClause extends QinLine {
 class SearchSame extends QinCombo {
   public constructor() {
     super();
-    this.addItem({ title: "==", value: "EQUALS" });
-    this.addItem({ title: "!=", value: "DIVERS" });
+    this.addItem({ title: "==", value: "SAME" });
+    this.addItem({ title: "!=", value: "DIVERSE" });
     this.style.putAsMaxWidth(64);
   }
 }

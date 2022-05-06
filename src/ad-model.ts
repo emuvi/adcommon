@@ -1,6 +1,7 @@
 import { AdField } from "./ad-field";
+import { AdInsert } from "./ad-insert";
 import { AdRegister } from "./ad-register";
-import { AdInsert, AdValued } from "./ad-swap";
+import { AdValued } from "./ad-valued";
 
 export class AdModel {
   private _register: AdRegister;

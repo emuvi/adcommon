@@ -5,4 +5,6 @@ export enum AdNames {
   AdProduct = "AdProduct",
   AdProject = "AdProject",
   AdSales = "AdSales",
+
+  AdSetup = "AdSetup",
 }

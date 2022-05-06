@@ -1,10 +1,10 @@
 import { QinWaiters } from "qinpel-res";
-import { AdScopes } from "./ad-consts";
-import { AdFilters } from "./ad-filters";
+import { AdFilter } from "./ad-filter";
+import { AdScope } from "./ad-tools";
 
 export class AdExpect {
-  private _scopes: AdScopes;
-  private _filters: AdFilters;
+  private _scopes: AdScope[];
+  private _filters: AdFilter[];
   private _waiters: QinWaiters;
 
   public constructor(options: AdExpectSet) {
@@ -13,11 +13,11 @@ export class AdExpect {
     this._waiters = options.waiters;
   }
 
-  public get scopes(): AdScopes {
+  public get scopes(): AdScope[] {
     return this._scopes;
   }
 
-  public get filters(): AdFilters {
+  public get filters(): AdFilter[] {
     return this._filters;
   }
 
@@ -27,7 +27,7 @@ export class AdExpect {
 }
 
 export type AdExpectSet = {
-  scopes: AdScopes;
-  filters?: AdFilters;
+  scopes: AdScope[];
+  filters?: AdFilter[];
   waiters?: QinWaiters;
 };

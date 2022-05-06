@@ -1,5 +1,5 @@
 import { QinAsset } from "qinpel-cps";
-import { AdModule } from "./ad-consts";
+import { AdModule } from "./ad-tools";
 
 export class AdModules {
   static BUSINESS: AdModule = {

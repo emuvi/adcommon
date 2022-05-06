@@ -1,13 +1,14 @@
 import { QinColumn, QinSplitter, QinStack } from "qinpel-cps";
-import { AdModule, AdScope } from "./ad-consts";
 import { AdExpect } from "./ad-expect";
 import { AdField } from "./ad-field";
 import { AdModel } from "./ad-model";
 import { AdRegBar } from "./ad-reg-bar";
 import { AdRegEditor } from "./ad-reg-editor";
+import { AdRegLoader } from "./ad-reg-loader";
 import { AdRegSearch } from "./ad-reg-search";
 import { AdRegTable } from "./ad-reg-table";
-import { AdRegistry } from "./ad-swap";
+import { AdRegistry } from "./ad-registry";
+import { AdModule, AdScope } from "./ad-tools";
 
 export class AdRegister extends QinColumn {
   private _module: AdModule;
@@ -28,6 +29,8 @@ export class AdRegister extends QinColumn {
   private _bodyEditor = new AdRegEditor(this);
   private _bodySearch = new AdRegSearch(this);
   private _table = new AdRegTable(this);
+
+  private _loader = new AdRegLoader(this);
 
   public constructor(module: AdModule, registry: AdRegistry, expect: AdExpect) {
     super();
@@ -53,6 +56,7 @@ export class AdRegister extends QinColumn {
     this._regBar.tabIndex = 0;
     this._body.tabIndex = 1;
     this._table.tabIndex = 2;
+    this._loader.start();
   }
 
   public get module(): AdModule {

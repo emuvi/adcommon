@@ -9,10 +9,10 @@ import {
   QinTool,
 } from "qinpel-cps";
 import { QinGrandeur, QinWaiters } from "qinpel-res";
-import { AdModule, AdOptions, AdScope, isSameModule } from "./ad-consts";
 import { AdExpect } from "./ad-expect";
+import { AdNames } from "./ad-names";
 import { AdRegister } from "./ad-register";
-import { AdTools } from "./ad-tools";
+import { AdModule, AdScope, AdSetup, AdTools } from "./ad-tools";
 
 export class AdMenu extends QinColumn {
   private _lines = new Array<QinTitled>();
@@ -30,7 +30,7 @@ export class AdMenu extends QinColumn {
         this.qinpel.chief.newJobber(
           item.module.title,
           item.module.app,
-          AdTools.newAdOption(item.module, [AdScope.ALL])
+          AdTools.newAdSetupOption(item.module, [AdScope.ALL])
         );
         this.qinpel.jobbed.close();
       });
@@ -68,15 +68,13 @@ export type AdMenuItem = {
 };
 
 export function menuStartUp(menus: AdMenuItem[]): QinBase {
-  const module = QinTool.qinpel.jobbed.getOption(AdOptions.MODULE);
-  const scopes = QinTool.qinpel.jobbed.getOption(AdOptions.SCOPES);
-  const filters = QinTool.qinpel.jobbed.getOption(AdOptions.FILTERS);
-  if (module) {
+  const adSetup = QinTool.qinpel.jobbed.getOption(AdNames.AdSetup) as AdSetup;
+  if (adSetup && adSetup.module) {
     for (const menu of menus) {
-      if (isSameModule(menu.module, module)) {
+      if (AdTools.isSameModule(menu.module, adSetup.module)) {
         let expect = new AdExpect({
-          scopes,
-          filters,
+          scopes: adSetup.scopes,
+          filters: adSetup.filters,
           waiters: new QinWaiters().addWaiter((result) => {
             QinTool.qinpel.jobbed.sendWaiters(result);
           }),
