@@ -112,32 +112,37 @@ export class AdRegister extends QinColumn {
     return this._regMode;
   }
 
-  public tryGoFirst() {
-    this._model.tryGoFirst();
-  }
+  public tryGoFirst() {}
 
-  public tryGoPrior() {
-    this._model.tryGoPrior();
-  }
+  public tryGoPrior() {}
 
-  public tryGoNext() {
-    this._model.tryGoNext();
-  }
+  public tryGoNext() {}
 
-  public tryGoLast() {
-    this._model.tryGoLast();
-  }
+  public tryGoLast() {}
 
-  public tryDelete() {
-    this._model.tryDelete();
-  }
+  public tryDelete() {}
 
   public tryConfirm() {
-    this._model.tryConfirm();
+    this.model
+      .insert()
+      .then((res) => {
+        this.clean();
+        this.focusFirstField();
+        this.qinpel.jobbed.statusInfo("Inserted: " + JSON.stringify(res));
+      })
+      .catch((err) => {
+        this.qinpel.jobbed.statusError(err, "{adcommon}(ErrCode-000001)");
+      });
   }
 
   public tryCancel() {
-    this._model.tryCancel();
+    this.clean();
+  }
+
+  public clean() {
+    for (let field of this.model.fields) {
+      field.clean();
+    }
   }
 
   public viewSingle() {
@@ -216,6 +221,12 @@ export class AdRegister extends QinColumn {
         }
       }
     });
+  }
+
+  public focusFirstField() {
+    if (this.model.fields.length > 0) {
+      this.model.fields[0].focus();
+    }
   }
 
   public focusBody() {

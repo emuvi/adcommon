@@ -48,6 +48,14 @@ export class AdField {
   public set edit(editor: QinEdit) {
     this._edit = editor;
   }
+
+  public clean() {
+    this.edit.setData(null);
+  }
+
+  public focus() {
+    this.edit.focus();
+  }
 }
 
 export type AdFieldSet = {
