@@ -1,18 +1,28 @@
 import { QinTool } from "qinpel-cps";
+import { AdFilter } from "./ad-filter";
 import { AdRegister } from "./ad-register";
 import { AdSelect } from "./ad-select";
 
 export class AdRegLoader {
-  private _register: AdRegister;
+  private _reg: AdRegister;
 
   public constructor(register: AdRegister) {
-    this._register = register;
+    this._reg = register;
   }
 
-  public start() {
-    let select = {
-      registry: this._register.registry,
-    } as AdSelect;
+  public load() {
+    let registry = this._reg.registry;
+    let fields = this._reg.model.typeds;
+    let filters: AdFilter[] = null;
+    if (this._reg.expect.filters) {
+      filters = [...this._reg.expect.filters];
+    }
+    let searching = this._reg.search.getFilters();
+    if (searching) {
+      filters = filters || [];
+      filters.push(...searching);
+    }
+    let select = { registry, fields, filters } as AdSelect;
     QinTool.qinpel.talk
       .post("/reg/ask", select)
       .then((res) => {

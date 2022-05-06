@@ -21,13 +21,14 @@ export class AdRegister extends QinColumn {
 
   private _listener = new Array<AdRegListener>();
 
-  private _regBar = new AdRegBar(this);
+  private _body = new QinStack();
   private _viewSingle = new QinStack();
   private _viewVertical = new QinSplitter({ horizontal: false });
   private _viewHorizontal = new QinSplitter({ horizontal: true });
-  private _body = new QinStack();
-  private _bodyEditor = new AdRegEditor(this);
-  private _bodySearch = new AdRegSearch(this);
+
+  private _bar = new AdRegBar(this);
+  private _editor = new AdRegEditor(this);
+  private _search = new AdRegSearch(this);
   private _table = new AdRegTable(this);
 
   private _loader = new AdRegLoader(this);
@@ -41,9 +42,9 @@ export class AdRegister extends QinColumn {
     this._viewSingle.style.putAsFlexMax();
     this._viewVertical.style.putAsFlexMax();
     this._viewHorizontal.style.putAsFlexMax();
-    this._regBar.install(this);
-    this._body.stack(this._bodyEditor);
-    this._body.stack(this._bodySearch);
+    this._bar.install(this);
+    this._body.stack(this._editor);
+    this._body.stack(this._search);
     if (
       expect.scopes.find((scope) => scope === AdScope.ALL) ||
       expect.scopes.find((scope) => scope === AdScope.INSERT)
@@ -53,10 +54,9 @@ export class AdRegister extends QinColumn {
       this.changeMode(AdRegMode.SEARCH);
     }
     this.viewVertical();
-    this._regBar.tabIndex = 0;
+    this._bar.tabIndex = 0;
     this._body.tabIndex = 1;
     this._table.tabIndex = 2;
-    this._loader.start();
   }
 
   public get module(): AdModule {
@@ -75,26 +75,54 @@ export class AdRegister extends QinColumn {
     return this._model;
   }
 
+  public get regMode(): AdRegMode {
+    return this._regMode;
+  }
+
+  public get regView(): AdRegView {
+    return this._regView;
+  }
+
+  public get bar(): AdRegBar {
+    return this._bar;
+  }
+
+  public get editor(): AdRegEditor {
+    return this._editor;
+  }
+
+  public get search(): AdRegSearch {
+    return this._search;
+  }
+
+  public get table(): AdRegTable {
+    return this._table;
+  }
+
+  public get loader(): AdRegLoader {
+    return this._loader;
+  }
+
   public addTab(title: string) {
-    this._bodyEditor.addTab(title);
+    this._editor.addTab(title);
   }
 
   public addLine() {
-    this._bodyEditor.addLine();
+    this._editor.addLine();
   }
 
   public addField(field: AdField) {
     this._model.addField(field);
-    this._bodyEditor.addField(field);
-    this._bodySearch.addField(field);
+    this._editor.addField(field);
+    this._search.addField(field);
     this._table.addHead(field.title);
   }
 
   private changeMode(mode: AdRegMode) {
     if (mode === AdRegMode.SEARCH) {
-      this._body.show(this._bodySearch);
+      this._body.show(this._search);
     } else {
-      this._body.show(this._bodyEditor);
+      this._body.show(this._editor);
     }
     this._regMode = mode;
     this.callDidListeners(AdRegEvent.CHANGE_MODE, { newValue: this._regMode });
@@ -112,10 +140,6 @@ export class AdRegister extends QinColumn {
     return null;
   }
 
-  public get mode(): AdRegMode {
-    return this._regMode;
-  }
-
   public tryGoFirst() {}
 
   public tryGoPrior() {}
@@ -124,9 +148,23 @@ export class AdRegister extends QinColumn {
 
   public tryGoLast() {}
 
-  public tryDelete() {}
+  public tryMutate() {}
 
   public tryConfirm() {
+    if (this.regMode === AdRegMode.SEARCH) {
+      this.trySelect();
+    } else if (this.regMode === AdRegMode.INSERT) {
+      this.tryInsert();
+    } else if (this.regMode === AdRegMode.MUTATE) {
+      this.tryUpdate();
+    }
+  }
+
+  private trySelect() {
+    this.loader.load();
+  }
+
+  private tryInsert() {
     this.model
       .insert()
       .then((res) => {
@@ -139,9 +177,13 @@ export class AdRegister extends QinColumn {
       });
   }
 
+  private tryUpdate() {}
+
   public tryCancel() {
     this.clean();
   }
+
+  public tryDelete() {}
 
   public clean() {
     for (let field of this.model.fields) {
@@ -186,10 +228,6 @@ export class AdRegister extends QinColumn {
     this._table.reDisplay();
     this._regView = AdRegView.HORIZONTAL;
     this.callDidListeners(AdRegEvent.CHANGE_VIEW, { newValue: this._regView });
-  }
-
-  public get view(): AdRegView {
-    return this._regView;
   }
 
   public addListener(listener: AdRegListener) {
@@ -249,15 +287,16 @@ export class AdRegister extends QinColumn {
 }
 
 export enum AdRegMode {
-  INSERT = "insert",
-  SEARCH = "search",
-  MUTATE = "mutate",
+  INSERT = "INSERT",
+  SEARCH = "SEARCH",
+  NOTICE = "NOTICE",
+  MUTATE = "MUTATE",
 }
 
 export enum AdRegView {
-  SINGLE = "insert",
-  VERTICAL = "search",
-  HORIZONTAL = "mutate",
+  SINGLE = "SINGLE",
+  VERTICAL = "VERTICAL",
+  HORIZONTAL = "HORIZONTAL",
 }
 
 export enum AdRegEvent {

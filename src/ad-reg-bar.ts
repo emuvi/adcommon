@@ -42,9 +42,10 @@ export class AdRegBar extends QinLine {
 
   private _qinInsert = new QinIcon(QinAsset.FaceAdd);
   private _qinSearch = new QinIcon(QinAsset.FaceSearch);
-  private _qinMutate = new QinIcon(QinAsset.FacePencil);
+  private _qinNotice = new QinIcon(QinAsset.FaceEye);
+
   private _qinMode = new QinIconPick({
-    icons: [this._qinInsert, this._qinSearch, this._qinMutate],
+    icons: [this._qinInsert, this._qinSearch, this._qinNotice],
   });
 
   private _qinGoFirst = new QinButton({ icon: new QinIcon(QinAsset.FaceRUpChevronPush) });
@@ -58,9 +59,10 @@ export class AdRegBar extends QinLine {
     icon: new QinIcon(QinAsset.FaceRDownChevronPush),
   });
 
-  private _qinDelete = new QinButton({ icon: new QinIcon(QinAsset.FaceTrash) });
+  private _qinMutate = new QinButton({ icon: new QinIcon(QinAsset.FacePencil) });
   private _qinConfirm = new QinButton({ icon: new QinIcon(QinAsset.FaceConfirm) });
   private _qinCancel = new QinButton({ icon: new QinIcon(QinAsset.FaceCancel) });
+  private _qinDelete = new QinButton({ icon: new QinIcon(QinAsset.FaceTrash) });
 
   public constructor(register: AdRegister) {
     super();
@@ -103,7 +105,7 @@ export class AdRegBar extends QinLine {
     this._qinMode.install(this);
     this._qinInsert.addActionMain((_) => this._reg.tryChangeMode(AdRegMode.INSERT));
     this._qinSearch.addActionMain((_) => this._reg.tryChangeMode(AdRegMode.SEARCH));
-    this._qinMutate.addActionMain((_) => this._reg.tryChangeMode(AdRegMode.MUTATE));
+    this._qinNotice.addActionMain((_) => this._reg.tryChangeMode(AdRegMode.NOTICE));
     this._reg.addListener({
       event: AdRegEvent.CHANGE_MODE,
       onDid: (values) => this.setMode(values.newValue),
@@ -122,12 +124,14 @@ export class AdRegBar extends QinLine {
   }
 
   private initMake() {
-    this._qinDelete.install(this);
-    this._qinDelete.addActionMain((_) => this._reg.tryDelete());
+    this._qinMutate.install(this);
+    this._qinMutate.addActionMain((_) => this._reg.tryMutate());
     this._qinConfirm.install(this);
     this._qinConfirm.addActionMain((_) => this._reg.tryConfirm());
     this._qinCancel.install(this);
     this._qinCancel.addActionMain((_) => this._reg.tryCancel());
+    this._qinDelete.install(this);
+    this._qinDelete.addActionMain((_) => this._reg.tryDelete());
   }
 
   private setMode(mode: AdRegMode) {
@@ -140,29 +144,42 @@ export class AdRegBar extends QinLine {
           this._qinGoPrior.unDisplay();
           this._qinGoNext.unDisplay();
           this._qinGoLast.unDisplay();
-          this._qinDelete.unDisplay();
+          this._qinMutate.unDisplay();
           this._qinConfirm.reDisplay();
           this._qinCancel.reDisplay();
+          this._qinDelete.unDisplay();
           break;
         case AdRegMode.SEARCH:
           this._qinMode.setData(this._qinSearch.asset);
-          this._qinGoFirst.reDisplay();
-          this._qinGoPrior.reDisplay();
-          this._qinGoNext.reDisplay();
-          this._qinGoLast.reDisplay();
-          this._qinDelete.unDisplay();
-          this._qinConfirm.unDisplay();
-          this._qinCancel.unDisplay();
-          break;
-        case AdRegMode.MUTATE:
-          this._qinMode.setData(this._qinMutate.asset);
           this._qinGoFirst.unDisplay();
           this._qinGoPrior.unDisplay();
           this._qinGoNext.unDisplay();
           this._qinGoLast.unDisplay();
-          this._qinDelete.reDisplay();
+          this._qinMutate.unDisplay();
           this._qinConfirm.reDisplay();
           this._qinCancel.reDisplay();
+          this._qinDelete.unDisplay();
+          break;
+        case AdRegMode.NOTICE:
+          this._qinMode.setData(this._qinNotice.asset);
+          this._qinGoFirst.reDisplay();
+          this._qinGoPrior.reDisplay();
+          this._qinGoNext.reDisplay();
+          this._qinGoLast.reDisplay();
+          this._qinMutate.reDisplay();
+          this._qinConfirm.unDisplay();
+          this._qinCancel.unDisplay();
+          this._qinDelete.unDisplay();
+          break;
+        case AdRegMode.MUTATE:
+          this._qinMode.setData(this._qinNotice.asset);
+          this._qinGoFirst.unDisplay();
+          this._qinGoPrior.unDisplay();
+          this._qinGoNext.unDisplay();
+          this._qinGoLast.unDisplay();
+          this._qinConfirm.reDisplay();
+          this._qinCancel.reDisplay();
+          this._qinDelete.reDisplay();
           break;
       }
     }

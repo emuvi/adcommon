@@ -1,15 +1,17 @@
 import { AdField } from "./ad-field";
 import { AdInsert } from "./ad-insert";
 import { AdRegister } from "./ad-register";
+import { AdTyped } from "./ad-typed";
 import { AdValued } from "./ad-valued";
 
 export class AdModel {
   private _register: AdRegister;
-  private _fields: AdField[];
+  private _fields: AdField[] = [];
+
+  private _typeds: AdTyped[] = null;
 
   public constructor(register: AdRegister) {
     this._register = register;
-    this._fields = [];
   }
 
   public get register(): AdRegister {
@@ -20,8 +22,27 @@ export class AdModel {
     return this._fields;
   }
 
+  public get typeds(): AdTyped[] {
+    if (this._typeds == null) {
+      this._typeds = [];
+      for (let field of this._fields) {
+        this._typeds.push(field.typed);
+      }
+    }
+    return this._typeds;
+  }
+
   public addField(field: AdField) {
     this._fields.push(field);
+  }
+
+  public getFieldByName(name: string): AdField {
+    for (let field of this._fields) {
+      if (field.name === name) {
+        return field;
+      }
+    }
+    return null;
   }
 
   public async insert(): Promise<AdInsert> {
