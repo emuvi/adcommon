@@ -138,7 +138,11 @@ class SearchClause extends QinLine {
     return new AdFilter({
       seems: this._qinSame.getData() as AdFilterSeems,
       likes: this._qinLikes.getData() as AdFilterLikes,
-      valued: field.valued,
+      valued: {
+        name: field.typed.alias || field.typed.name,
+        type: field.typed.type,
+        data: this._qinValue.getData(),
+      },
       ties: this._qinTies.getData() as AdFilterTies,
     });
   }

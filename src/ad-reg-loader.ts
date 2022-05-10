@@ -26,10 +26,11 @@ export class AdRegLoader {
     QinTool.qinpel.talk
       .post("/reg/ask", select)
       .then((res) => {
-        console.log(res.data);
         let rows = QinTool.qinpel.our.soul.body.getCSVRows(res.data);
-        for (let row of rows) {
-          console.log(row);
+        if (rows) {
+          for (let row of rows) {
+            console.log(row);
+          }
         }
       })
       .catch((err) => {

@@ -6,8 +6,8 @@ export class AdField {
   private _title: string;
   private _key: boolean;
   private _name: string;
-  private _kind: QinMutants;
   private _alias: string;
+  private _kind: QinMutants;
   private _options: any;
 
   private _edit: QinEdit = null;
@@ -16,9 +16,20 @@ export class AdField {
   constructor(newer: AdFieldSet) {
     this._title = newer.title;
     this._name = newer.name;
+    this._alias = newer.alias;
     this._kind = newer.kind;
     this._options = newer.options;
-    this._key = newer.key ? true : false;
+    this._key = newer.key ?? false;
+    this.init();
+  }
+
+  private init() {
+    this._edit = QinMutantsArm.newEdit(this._kind, this._options);
+    this._typed = {
+      name: this._name,
+      type: this.edit.getNature(),
+      alias: this._alias,
+    };
   }
 
   public get title(): string {
@@ -46,29 +57,18 @@ export class AdField {
   }
 
   public get edit(): QinEdit {
-    if (this._edit == null) {
-      this._edit = QinMutantsArm.newEdit(this._kind, this._options);
-    }
     return this._edit;
   }
 
   public get typed(): AdTyped {
-    if (this._typed == null) {
-      this._typed = {
-        name: this._name,
-        type: this.edit.getNature(),
-        alias: this._alias,
-      };
-    }
     return this._typed;
   }
 
   public get valued(): AdValued {
-    return {
-      name: this._name,
-      type: this.edit.getNature(),
-      data: this.edit.getData(),
-    };
+    let name = this._name;
+    let type = this._edit.getNature();
+    let data = this._edit.getData();
+    return { name, type, data };
   }
 
   public clean() {
@@ -83,8 +83,8 @@ export class AdField {
 export type AdFieldSet = {
   title?: string;
   name: string;
-  kind: QinMutants;
   alias?: string;
+  kind: QinMutants;
   options?: any;
   key?: boolean;
 };
