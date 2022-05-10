@@ -120,10 +120,10 @@ class SearchClause extends QinLine {
   }
 
   public clear() {
-    this._qinSame.setData("EQUALS");
-    this._qinLikes.setData("EQUALS");
+    this._qinSame.setData(AdFilterSeems.SAME);
+    this._qinLikes.setData(AdFilterLikes.EQUALS);
     this._qinValue.setData(null);
-    this._qinTies.setData("AND");
+    this._qinTies.setData(AdFilterTies.AND);
   }
 
   public getFilter(): AdFilter {
@@ -151,8 +151,8 @@ class SearchClause extends QinLine {
 class SearchSame extends QinCombo {
   public constructor() {
     super();
-    this.addItem({ title: "==", value: "SAME" });
-    this.addItem({ title: "!=", value: "DIVERSE" });
+    this.addItem({ title: "==", value: AdFilterSeems.SAME });
+    this.addItem({ title: "!=", value: AdFilterSeems.DIVERSE });
     this.style.putAsMaxWidth(64);
   }
 }
@@ -160,14 +160,14 @@ class SearchSame extends QinCombo {
 class SearchCondition extends QinCombo {
   public constructor() {
     super();
-    this.addItem({ title: "=", value: "EQUALS" });
-    this.addItem({ title: ">", value: "BIGGER" });
-    this.addItem({ title: "<", value: "LESSER" });
-    this.addItem({ title: ">=", value: "BIGGER_EQUALS" });
-    this.addItem({ title: "<=", value: "LESSER_EQUALS" });
-    this.addItem({ title: "$_", value: "STARTS_WITH" });
-    this.addItem({ title: "_$", value: "ENDS_WITH" });
-    this.addItem({ title: "_$_", value: "CONTAINS" });
+    this.addItem({ title: "=", value: AdFilterLikes.EQUALS });
+    this.addItem({ title: ">", value: AdFilterLikes.BIGGER });
+    this.addItem({ title: "<", value: AdFilterLikes.LESSER });
+    this.addItem({ title: ">=", value: AdFilterLikes.BIGGER_EQUALS });
+    this.addItem({ title: "<=", value: AdFilterLikes.LESSER_EQUALS });
+    this.addItem({ title: "$_", value: AdFilterLikes.STARTS_WITH });
+    this.addItem({ title: "_$", value: AdFilterLikes.ENDS_WITH });
+    this.addItem({ title: "_$_", value: AdFilterLikes.CONTAINS });
     this.style.putAsMaxWidth(64);
   }
 }
@@ -175,8 +175,8 @@ class SearchCondition extends QinCombo {
 class SearchTie extends QinCombo {
   public constructor() {
     super();
-    this.addItem({ title: "&&", value: "AND" });
-    this.addItem({ title: "||", value: "OR" });
+    this.addItem({ title: "&&", value: AdFilterTies.AND });
+    this.addItem({ title: "||", value: AdFilterTies.OR });
     this.style.putAsMaxWidth(64);
   }
 }

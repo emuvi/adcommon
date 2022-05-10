@@ -54,6 +54,10 @@ export class AdRegister extends QinColumn {
       this.changeMode(AdRegMode.SEARCH);
     }
     this.viewVertical();
+    this._body.style.putAsFlexMax();
+    this._editor.style.putAsFlexMax();
+    this._search.style.putAsFlexMax();
+    this._table.style.putAsFlexMax();
     this._bar.tabIndex = 0;
     this._body.tabIndex = 1;
     this._table.tabIndex = 2;
