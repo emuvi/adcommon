@@ -2,10 +2,13 @@ import { QinTable } from "qinpel-cps";
 import { AdRegister } from "./ad-register";
 
 export class AdRegTable extends QinTable {
-  private _register: AdRegister;
+  private _reg: AdRegister;
 
   public constructor(register: AdRegister) {
     super();
-    this._register = register;
+    this._reg = register;
+    this.addOnLineMainAct((row, values: string[]) => {
+      this._reg.tryNotice(row, values);
+    });
   }
 }

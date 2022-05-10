@@ -45,6 +45,18 @@ export class AdModel {
     return null;
   }
 
+  public setData(index: number, data: any) {
+    this._fields[index].edit.setData(data);
+  }
+
+  public turnReadOnly() {
+    // [ TODO ] implement the read-only mode for each editor
+  }
+
+  public turnEditable() {
+    // [ TODO ] implement the editable mode for each editor
+  }
+
   public async insert(): Promise<AdInsert> {
     return new Promise<AdInsert>((resolve, reject) => {
       let valueds = new Array<AdValued>();

@@ -19,6 +19,9 @@ export class AdRegister extends QinColumn {
   private _regMode: AdRegMode;
   private _regView: AdRegView;
 
+  private _seeRow: number;
+  private _seeValues: string[];
+
   private _listener = new Array<AdRegListener>();
 
   private _body = new QinStack();
@@ -49,9 +52,9 @@ export class AdRegister extends QinColumn {
       expect.scopes.find((scope) => scope === AdScope.ALL) ||
       expect.scopes.find((scope) => scope === AdScope.INSERT)
     ) {
-      this.changeMode(AdRegMode.INSERT);
+      this.turnMode(AdRegMode.INSERT);
     } else {
-      this.changeMode(AdRegMode.SEARCH);
+      this.turnMode(AdRegMode.SEARCH);
     }
     this.viewVertical();
     this._body.style.putAsFlexMax();
@@ -122,25 +125,43 @@ export class AdRegister extends QinColumn {
     this._table.addHead(field.title);
   }
 
-  private changeMode(mode: AdRegMode) {
+  public tryTurnMode(mode: AdRegMode): AdRegTryCanceled {
+    let turning = {
+      oldMode: this._regMode,
+      newMode: mode,
+    } as AdRegTurningMode;
+    let canceled = this.callTryListeners(AdRegTurn.TURN_MODE, turning);
+    if (canceled) return canceled;
+    this.turnMode(mode);
+    this.callDidListeners(AdRegTurn.TURN_MODE, turning);
+    return null;
+  }
+
+  private turnMode(mode: AdRegMode) {
     if (mode === AdRegMode.SEARCH) {
       this._body.show(this._search);
     } else {
       this._body.show(this._editor);
     }
     this._regMode = mode;
-    this.callDidListeners(AdRegEvent.CHANGE_MODE, { newValue: this._regMode });
   }
 
-  public tryChangeMode(mode: AdRegMode): AdRegTryCancel {
-    let cancel = this.callTryListeners(AdRegEvent.CHANGE_MODE, {
-      oldValue: this._regMode,
-      setValue: mode,
-    });
-    if (cancel) {
-      return cancel;
+  public tryNotice(row: number, values: string[]): AdRegTryCanceled {
+    let canceled = this.tryTurnMode(AdRegMode.NOTICE);
+    if (canceled) return canceled;
+    let turning = {
+      oldRow: this._seeRow,
+      oldValues: this._seeValues,
+      newRow: row,
+      newValues: values,
+    } as AdRegTurningNotice;
+    canceled = this.callTryListeners(AdRegTurn.TURN_NOTICE, turning);
+    if (canceled) return canceled;
+    for (let i = 0; i < values.length; i++) {
+      this._model.setData(i, values[i]);
     }
-    this.changeMode(mode);
+    this._model.turnReadOnly();
+    this.callDidListeners(AdRegTurn.TURN_NOTICE, turning);
     return null;
   }
 
@@ -207,7 +228,7 @@ export class AdRegister extends QinColumn {
       this._viewSingle.show(this._body);
     }
     this._regView = AdRegView.SINGLE;
-    this.callDidListeners(AdRegEvent.CHANGE_VIEW, { newValue: this._regView });
+    this.callDidListeners(AdRegTurn.TURN_VIEW, { newValue: this._regView });
   }
 
   public viewVertical() {
@@ -219,7 +240,7 @@ export class AdRegister extends QinColumn {
     this._body.reDisplay();
     this._table.reDisplay();
     this._regView = AdRegView.VERTICAL;
-    this.callDidListeners(AdRegEvent.CHANGE_VIEW, { newValue: this._regView });
+    this.callDidListeners(AdRegTurn.TURN_VIEW, { newValue: this._regView });
   }
 
   public viewHorizontal() {
@@ -231,7 +252,7 @@ export class AdRegister extends QinColumn {
     this._body.reDisplay();
     this._table.reDisplay();
     this._regView = AdRegView.HORIZONTAL;
-    this.callDidListeners(AdRegEvent.CHANGE_VIEW, { newValue: this._regView });
+    this.callDidListeners(AdRegTurn.TURN_VIEW, { newValue: this._regView });
   }
 
   public addListener(listener: AdRegListener) {
@@ -245,11 +266,11 @@ export class AdRegister extends QinColumn {
     }
   }
 
-  private callTryListeners(event: AdRegEvent, value: AdRegTryChange): AdRegTryCancel {
+  private callTryListeners(event: AdRegTurn, valued: any): AdRegTryCanceled {
     this._listener.forEach((listen) => {
       if (listen.event === event) {
         if (listen.onTry) {
-          let cancel = listen.onTry(value);
+          let cancel = listen.onTry(valued);
           if (cancel) {
             return cancel;
           }
@@ -259,11 +280,11 @@ export class AdRegister extends QinColumn {
     return null;
   }
 
-  private callDidListeners(event: AdRegEvent, value: AdRegDidChange) {
+  private callDidListeners(event: AdRegTurn, mutation: any) {
     this._listener.forEach((listen) => {
       if (listen.event === event) {
         if (listen.onDid) {
-          listen.onDid(value);
+          listen.onDid(mutation);
         }
       }
     });
@@ -303,29 +324,40 @@ export enum AdRegView {
   HORIZONTAL = "HORIZONTAL",
 }
 
-export enum AdRegEvent {
-  CHANGE_MODE = "CHANGE_MODE",
-  CHANGE_VIEW = "CHANGE_VIEW",
+export enum AdRegTurn {
+  TURN_MODE = "TURN_MODE",
+  TURN_VIEW = "TURN_VIEW",
+  TURN_NOTICE = "TURN_NOTICE",
 }
 
-export type AdRegTryChange = {
-  oldValue: any;
-  setValue: any;
+export type AdRegTurningMode = {
+  oldMode: AdRegMode;
+  newMode: AdRegMode;
 };
 
-export type AdRegTryCancel = {
+export type AdRegTurningView = {
+  oldView: AdRegView;
+  newView: AdRegView;
+};
+
+export type AdRegTurningNotice = {
+  oldRow: number;
+  oldValues: string[];
+  newRow: number;
+  newValues: string[];
+};
+
+export type AdRegTurning = AdRegTurningMode | AdRegTurningView | AdRegTurningNotice;
+
+export type AdRegTryCanceled = {
   why: string;
 };
 
-export type AdRegDidChange = {
-  newValue: any;
-};
-
-export type AdRegTryCaller = (values: AdRegTryChange) => AdRegTryCancel;
-export type AdRegDidCaller = (values: AdRegDidChange) => void;
+export type AdRegTryCaller = (turning: AdRegTurning) => AdRegTryCanceled;
+export type AdRegDidCaller = (turning: AdRegTurning) => void;
 
 export type AdRegListener = {
-  event: AdRegEvent;
+  event: AdRegTurn;
   onTry?: AdRegTryCaller;
   onDid?: AdRegDidCaller;
 };

@@ -7,7 +7,7 @@ import {
   QinLine,
   QinPopup,
 } from "qinpel-cps";
-import { AdRegEvent, AdRegister, AdRegMode } from "./ad-register";
+import { AdRegister, AdRegMode, AdRegTurn } from "./ad-register";
 
 export class AdRegBar extends QinLine {
   private _reg: AdRegister;
@@ -103,11 +103,11 @@ export class AdRegBar extends QinLine {
 
   private initMode() {
     this._qinMode.install(this);
-    this._qinInsert.addActionMain((_) => this._reg.tryChangeMode(AdRegMode.INSERT));
-    this._qinSearch.addActionMain((_) => this._reg.tryChangeMode(AdRegMode.SEARCH));
-    this._qinNotice.addActionMain((_) => this._reg.tryChangeMode(AdRegMode.NOTICE));
+    this._qinInsert.addActionMain((_) => this._reg.tryTurnMode(AdRegMode.INSERT));
+    this._qinSearch.addActionMain((_) => this._reg.tryTurnMode(AdRegMode.SEARCH));
+    this._qinNotice.addActionMain((_) => this._reg.tryTurnMode(AdRegMode.NOTICE));
     this._reg.addListener({
-      event: AdRegEvent.CHANGE_MODE,
+      event: AdRegTurn.TURN_MODE,
       onDid: (values) => this.setMode(values.newValue),
     });
   }
