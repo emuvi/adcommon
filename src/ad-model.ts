@@ -49,6 +49,12 @@ export class AdModel {
     this._fields[index].edit.setData(data);
   }
 
+  public clean() {
+    for (let field of this._fields) {
+      field.clean();
+    }
+  }
+
   public turnReadOnly() {
     // [ TODO ] implement the read-only mode for each editor
   }

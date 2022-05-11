@@ -211,9 +211,7 @@ export class AdRegister extends QinColumn {
   public tryDelete() {}
 
   public clean() {
-    for (let field of this.model.fields) {
-      field.clean();
-    }
+    this._model.clean();
   }
 
   public viewSingle() {

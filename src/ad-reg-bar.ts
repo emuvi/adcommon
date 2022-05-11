@@ -7,7 +7,7 @@ import {
   QinLine,
   QinPopup,
 } from "qinpel-cps";
-import { AdRegister, AdRegMode, AdRegTurn } from "./ad-register";
+import { AdRegister, AdRegMode, AdRegTurn, AdRegTurningMode } from "./ad-register";
 
 export class AdRegBar extends QinLine {
   private _reg: AdRegister;
@@ -46,6 +46,7 @@ export class AdRegBar extends QinLine {
 
   private _qinMode = new QinIconPick({
     icons: [this._qinInsert, this._qinSearch, this._qinNotice],
+    readOnly: true,
   });
 
   private _qinGoFirst = new QinButton({ icon: new QinIcon(QinAsset.FaceRUpChevronPush) });
@@ -108,7 +109,7 @@ export class AdRegBar extends QinLine {
     this._qinNotice.addActionMain((_) => this._reg.tryTurnMode(AdRegMode.NOTICE));
     this._reg.addListener({
       event: AdRegTurn.TURN_MODE,
-      onDid: (values) => this.setMode(values.newValue),
+      onDid: (turned) => this.setMode((turned as AdRegTurningMode).newMode),
     });
   }
 
