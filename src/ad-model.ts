@@ -56,11 +56,15 @@ export class AdModel {
   }
 
   public turnReadOnly() {
-    // [ TODO ] implement the read-only mode for each editor
+    for (let field of this._fields) {
+      field.edit.turnReadOnly();
+    }
   }
 
   public turnEditable() {
-    // [ TODO ] implement the editable mode for each editor
+    for (let field of this._fields) {
+      field.edit.turnEditable();
+    }
   }
 
   public async insert(): Promise<AdInsert> {

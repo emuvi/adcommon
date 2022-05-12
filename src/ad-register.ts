@@ -143,6 +143,11 @@ export class AdRegister extends QinColumn {
     } else {
       this._body.show(this._editor);
     }
+    if (mode === AdRegMode.NOTICE) {
+      this._model.turnReadOnly();
+    } else {
+      this._model.turnEditable();
+    }
     this._regMode = mode;
   }
 
@@ -160,7 +165,7 @@ export class AdRegister extends QinColumn {
     for (let i = 0; i < values.length; i++) {
       this._model.setData(i, values[i]);
     }
-    this._model.turnReadOnly();
+    this.turnMode(AdRegMode.NOTICE);
     this.callDidListeners(AdRegTurn.TURN_NOTICE, turning);
     return null;
   }
