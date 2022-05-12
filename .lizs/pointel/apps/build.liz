@@ -15,7 +15,7 @@ else
     Ext = ""
 end
 Liz.cmd("tsc" .. Ext, { "-p", "tsconfig.json" })
-print("Done compile sources.")
+print("Done compile sources")
 
 if Liz.has("pos-build.liz") then
     print("Running post build...")

@@ -37,7 +37,7 @@ export class AdRegSearch extends QinScroll {
     });
   }
 
-  // [ TODO ] - Make addClause private
+  // [ EVAL ] - How to make addClause private?
   public addClause(after: SearchClause) {
     const clause = new SearchClause(this);
     this._reg.model.fields.forEach((field) => {
@@ -48,14 +48,14 @@ export class AdRegSearch extends QinScroll {
     this.rebuild();
   }
 
-  // [ TODO ] - Make delClause private
+  // [ EVAL ] - How to make delClause private?
   public delClause(clause: SearchClause) {
     if (this._clauses.length > 1) {
       const index = this._clauses.indexOf(clause);
       this._clauses.splice(index, 1);
       this.rebuild();
     } else {
-      this._clauses[0].clear();
+      this._clauses[0].clean();
     }
   }
 
@@ -78,6 +78,14 @@ export class AdRegSearch extends QinScroll {
       }
     });
     return results;
+  }
+
+  public clean(): void {
+    if (this._clauses.length > 1) {
+      this._clauses.splice(1, this._clauses.length - 1);
+      this.rebuild();
+    }
+    this._clauses[0].clean();
   }
 }
 
@@ -119,7 +127,7 @@ class SearchClause extends QinLine {
     this._qinField.addItem(item);
   }
 
-  public clear() {
+  public clean() {
     this._qinSame.setData(AdFilterSeems.SAME);
     this._qinLikes.setData(AdFilterLikes.EQUALS);
     this._qinValue.setData(null);

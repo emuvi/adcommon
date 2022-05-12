@@ -7,7 +7,6 @@ import { AdValued } from "./ad-valued";
 export class AdModel {
   private _register: AdRegister;
   private _fields: AdField[] = [];
-
   private _typeds: AdTyped[] = null;
 
   public constructor(register: AdRegister) {
@@ -65,6 +64,10 @@ export class AdModel {
     for (let field of this._fields) {
       field.edit.turnEditable();
     }
+  }
+
+  public undoMutations() {
+    // [ TODO ] - Implement undoMutations on the model.
   }
 
   public async insert(): Promise<AdInsert> {

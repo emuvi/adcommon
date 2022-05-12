@@ -208,7 +208,7 @@ export class AdRegister extends QinColumn {
     this.model
       .insert()
       .then((res) => {
-        this.clean();
+        this._model.clean();
         this.focusFirstField();
         this.qinpel.jobbed.statusInfo("Inserted: " + JSON.stringify(res));
       })
@@ -220,14 +220,17 @@ export class AdRegister extends QinColumn {
   private tryUpdate() {}
 
   public tryCancel() {
-    this.clean();
+    if (this.regMode === AdRegMode.INSERT) {
+      this._model.clean();
+    } else if (this.regMode === AdRegMode.SEARCH) {
+      this._search.clean();
+    } else if (this.regMode === AdRegMode.MUTATE) {
+      this._model.undoMutations();
+      this.tryTurnMode(AdRegMode.NOTICE);
+    }
   }
 
   public tryDelete() {}
-
-  public clean() {
-    this._model.clean();
-  }
 
   public viewSingle() {
     this._viewVertical.unInstall();
