@@ -4,17 +4,13 @@ import { AdRegister } from "./ad-register";
 import { AdTyped } from "./ad-typed";
 import { AdValued } from "./ad-valued";
 
-export class AdModel {
-  private _register: AdRegister;
+export class AdRegModel {
+  private _reg: AdRegister;
   private _fields: AdField[] = [];
   private _typeds: AdTyped[] = null;
 
   public constructor(register: AdRegister) {
-    this._register = register;
-  }
-
-  public get register(): AdRegister {
-    return this._register;
+    this._reg = register;
   }
 
   public get fields(): AdField[] {
@@ -81,10 +77,10 @@ export class AdModel {
         });
       }
       let insert = {
-        registry: this.register.registry,
+        registry: this._reg.registry,
         valueds: valueds,
       } as AdInsert;
-      this.register.qinpel.chief.talk
+      this._reg.qinpel.chief.talk
         .post("/reg/new", insert)
         .then((_) => {
           resolve(insert);

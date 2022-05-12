@@ -1,10 +1,10 @@
 import { QinColumn, QinSplitter, QinStack } from "qinpel-cps";
 import { AdExpect } from "./ad-expect";
 import { AdField } from "./ad-field";
-import { AdModel } from "./ad-model";
 import { AdRegBar } from "./ad-reg-bar";
 import { AdRegEditor } from "./ad-reg-editor";
 import { AdRegLoader } from "./ad-reg-loader";
+import { AdRegModel } from "./ad-reg-model";
 import { AdRegSearch } from "./ad-reg-search";
 import { AdRegTable } from "./ad-reg-table";
 import { AdRegistry } from "./ad-registry";
@@ -14,7 +14,7 @@ export class AdRegister extends QinColumn {
   private _module: AdModule;
   private _registry: AdRegistry;
   private _expect: AdExpect;
-  private _model: AdModel;
+  private _model: AdRegModel;
 
   private _regMode: AdRegMode;
   private _regView: AdRegView;
@@ -41,7 +41,7 @@ export class AdRegister extends QinColumn {
     this._module = module;
     this._registry = registry;
     this._expect = expect;
-    this._model = new AdModel(this);
+    this._model = new AdRegModel(this);
     this._viewSingle.style.putAsFlexMax();
     this._viewVertical.style.putAsFlexMax();
     this._viewHorizontal.style.putAsFlexMax();
@@ -78,7 +78,7 @@ export class AdRegister extends QinColumn {
     return this._expect;
   }
 
-  public get model(): AdModel {
+  public get model(): AdRegModel {
     return this._model;
   }
 
