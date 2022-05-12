@@ -178,7 +178,17 @@ export class AdRegister extends QinColumn {
 
   public tryGoLast() {}
 
-  public tryMutate() {}
+  public tryMutate() {
+    let canceled = this.tryTurnMode(AdRegMode.MUTATE);
+    if (canceled) return canceled;
+    let turning = {
+      oldMode: this._regMode,
+      newMode: AdRegMode.MUTATE,
+    } as AdRegTurningMode;
+    this.turnMode(AdRegMode.MUTATE);
+    this.callDidListeners(AdRegTurn.TURN_MODE, turning);
+    return null;
+  }
 
   public tryConfirm() {
     if (this.regMode === AdRegMode.SEARCH) {
