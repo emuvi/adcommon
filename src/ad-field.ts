@@ -82,6 +82,10 @@ export class AdField {
     this._data = newData;
   }
 
+  public hasMutations(): boolean {
+    return this._data != this._edit.getData();
+  }
+
   public undoMutations() {
     this._edit.setData(this._data);
   }
