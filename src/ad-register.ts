@@ -52,9 +52,9 @@ export class AdRegister extends QinColumn {
       expect.scopes.find((scope) => scope === AdScope.ALL) ||
       expect.scopes.find((scope) => scope === AdScope.INSERT)
     ) {
-      this.turnMode(AdRegMode.INSERT);
+      this.tryTurnMode(AdRegMode.INSERT);
     } else {
-      this.turnMode(AdRegMode.SEARCH);
+      this.tryTurnMode(AdRegMode.SEARCH);
     }
     this.viewVertical();
     this._body.style.putAsFlexMax();
