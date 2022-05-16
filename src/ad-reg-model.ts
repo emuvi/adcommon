@@ -63,9 +63,12 @@ export class AdRegModel {
   }
 
   public hasMutations(): string[] {
-    let result = new Array<string>();
+    let result: Array<string> = null;
     for (let field of this._fields) {
       if (field.hasMutations()) {
+        if (result == null) {
+          result = [];
+        }
         result.push(field.title);
       }
     }

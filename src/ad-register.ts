@@ -221,16 +221,35 @@ export class AdRegister extends QinColumn {
 
   public tryCancel() {
     if (this.regMode === AdRegMode.INSERT) {
-      this._model.clean();
+      this.checkForMutations(() => this._model.clean());
     } else if (this.regMode === AdRegMode.SEARCH) {
       this._search.clean();
     } else if (this.regMode === AdRegMode.MUTATE) {
-      this._model.undoMutations();
-      this.tryTurnMode(AdRegMode.NOTICE);
+      this.checkForMutations(() => {
+        this._model.undoMutations();
+        this.tryTurnMode(AdRegMode.NOTICE);
+      });
     }
   }
 
   public tryDelete() {}
+
+  private checkForMutations(runIfOk: () => void) {
+    const mutations = this._model.hasMutations();
+    if (mutations) {
+      let message =
+        "There are mutations on this fields: " +
+        mutations.join(", ") +
+        ". Should we continue?";
+      this.qinpel.jobbed.showDialog(message).then((confirmed) => {
+        if (confirmed) {
+          runIfOk();
+        }
+      });
+    } else {
+      runIfOk();
+    }
+  }
 
   public viewSingle() {
     this._viewVertical.unInstall();

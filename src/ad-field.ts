@@ -83,6 +83,7 @@ export class AdField {
   }
 
   public hasMutations(): boolean {
+    // [ TODO ] - It is always returning true.
     return this._data != this._edit.getData();
   }
 
