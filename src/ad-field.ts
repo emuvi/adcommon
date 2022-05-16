@@ -13,6 +13,8 @@ export class AdField {
   private _edit: QinEdit = null;
   private _typed: AdTyped = null;
 
+  private _data: any = null;
+
   constructor(newer: AdFieldSet) {
     this._title = newer.title;
     this._name = newer.name;
@@ -71,12 +73,25 @@ export class AdField {
     return { name, type, data };
   }
 
+  public get data(): any {
+    return this._data;
+  }
+
+  public set data(newData: any) {
+    this._edit.setData(newData);
+    this._data = newData;
+  }
+
+  public undoMutations() {
+    this._edit.setData(this._data);
+  }
+
   public clean() {
-    this.edit.setData(null);
+    this.data = null;
   }
 
   public focus() {
-    this.edit.focus();
+    this._edit.focus();
   }
 }
 

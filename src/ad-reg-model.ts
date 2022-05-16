@@ -41,7 +41,7 @@ export class AdRegModel {
   }
 
   public setData(index: number, data: any) {
-    this._fields[index].edit.setData(data);
+    this._fields[index].data = data;
   }
 
   public clean() {
@@ -63,7 +63,9 @@ export class AdRegModel {
   }
 
   public undoMutations() {
-    // [ TODO ] - Implement undoMutations on the model.
+    for (let field of this._fields) {
+      field.undoMutations();
+    }
   }
 
   public async insert(): Promise<AdInsert> {
