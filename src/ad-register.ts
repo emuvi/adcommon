@@ -238,9 +238,7 @@ export class AdRegister extends QinColumn {
     const mutations = this._model.hasMutations();
     if (mutations) {
       let message =
-        "There are mutations on this fields: " +
-        mutations.join(", ") +
-        ". Should we continue?";
+        "There are mutations on:\n" + mutations.join(", ") + "\nShould we continue?";
       this.qinpel.jobbed.showDialog(message).then((confirmed) => {
         if (confirmed) {
           runIfOk();
