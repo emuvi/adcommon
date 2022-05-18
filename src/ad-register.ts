@@ -152,12 +152,21 @@ export class AdRegister extends QinColumn {
   }
 
   private turnMode(mode: AdRegMode) {
+    if (mode === AdRegMode.INSERT) {
+      this._model.clean();
+    }
     if (mode === AdRegMode.SEARCH) {
       this._body.show(this._search);
     } else {
       this._body.show(this._editor);
     }
     if (mode === AdRegMode.NOTICE) {
+      if (this._seeRow > -1) {
+        let values = this._table.getLine(this._seeRow);
+        if (values) {
+          this.setRowAndValues(this._seeRow, values);
+        }
+      }
       this._model.turnReadOnly();
     } else {
       this._model.turnEditable();
@@ -177,11 +186,7 @@ export class AdRegister extends QinColumn {
           if (canceled) {
             reject(canceled);
           }
-          for (let i = 0; i < values.length; i++) {
-            this._model.setData(i, values[i]);
-          }
-          this._seeRow = row;
-          this._table.select(row);
+          this.setRowAndValues(row, values);
           this.turnMode(AdRegMode.NOTICE);
           this.callDidListeners(AdRegTurn.TURN_NOTICE, turning);
           resolve(turning);
@@ -190,6 +195,14 @@ export class AdRegister extends QinColumn {
           reject(err);
         });
     });
+  }
+
+  private setRowAndValues(row: number, values: string[]) {
+    for (let i = 0; i < values.length; i++) {
+      this._model.setData(i, values[i]);
+    }
+    this._seeRow = row;
+    this._table.select(row);
   }
 
   public tryGoFirst() {
