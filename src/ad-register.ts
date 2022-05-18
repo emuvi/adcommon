@@ -203,6 +203,7 @@ export class AdRegister extends QinColumn {
     }
     this._seeRow = row;
     this._table.select(row);
+    this._table.scrollTo(row);
   }
 
   public tryGoFirst() {
