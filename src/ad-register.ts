@@ -163,6 +163,7 @@ export class AdRegister extends QinColumn {
       this._model.setData(i, values[i]);
     }
     this._seeRow = row;
+    this._table.select(row);
     this.turnMode(AdRegMode.NOTICE);
     this.callDidListeners(AdRegTurn.TURN_NOTICE, turning);
     return null;
