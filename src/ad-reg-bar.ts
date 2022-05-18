@@ -106,7 +106,11 @@ export class AdRegBar extends QinLine {
     this._qinMode.install(this);
     this._qinInsert.addActionMain((_) => this._reg.tryTurnMode(AdRegMode.INSERT));
     this._qinSearch.addActionMain((_) => this._reg.tryTurnMode(AdRegMode.SEARCH));
-    this._qinNotice.addActionMain((_) => this._reg.tryTurnMode(AdRegMode.NOTICE));
+    this._qinNotice.addActionMain((_) =>
+      this._reg.tryTurnMode(AdRegMode.NOTICE).catch((err) => {
+        this.qinpel.jobbed.showAlert(err.toString());
+      })
+    );
     this._reg.addListener({
       event: AdRegTurn.TURN_MODE,
       onDid: (turned) => this.setMode((turned as AdRegTurningMode).newMode),

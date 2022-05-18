@@ -140,6 +140,12 @@ export class AdRegister extends QinColumn {
           if (canceled) {
             reject(canceled);
           }
+          if (mode == AdRegMode.NOTICE) {
+            if (!this.isSeeRowValid()) {
+              reject({ why: "There's no valid row selected to notice." });
+              return;
+            }
+          }
           this.turnMode(mode);
           this.callDidListeners(AdRegTurn.TURN_MODE, turning);
           resolve(turning);
@@ -149,6 +155,10 @@ export class AdRegister extends QinColumn {
         },
       });
     });
+  }
+
+  private isSeeRowValid(): boolean {
+    return this._seeRow >= 0 && this._seeRow < this._table.getLinesSize();
   }
 
   private turnMode(mode: AdRegMode) {
@@ -407,8 +417,8 @@ export class AdRegister extends QinColumn {
 export enum AdRegMode {
   INSERT = "INSERT",
   SEARCH = "SEARCH",
-  NOTICE = "NOTICE",
   MUTATE = "MUTATE",
+  NOTICE = "NOTICE",
 }
 
 export enum AdRegView {
