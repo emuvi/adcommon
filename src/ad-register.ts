@@ -124,16 +124,27 @@ export class AdRegister extends QinColumn {
     this._table.addHead(field.title);
   }
 
-  public tryTurnMode(mode: AdRegMode): AdRegTryCanceled {
-    let turning = {
-      oldMode: this._regMode,
-      newMode: mode,
-    } as AdRegTurningMode;
-    let canceled = this.callTryListeners(AdRegTurn.TURN_MODE, turning);
-    if (canceled) return canceled;
-    this.turnMode(mode);
-    this.callDidListeners(AdRegTurn.TURN_MODE, turning);
-    return null;
+  public tryTurnMode(mode: AdRegMode): Promise<AdRegTurningMode> {
+    return new Promise<AdRegTurningMode>((resolve, reject) => {
+      this.checkForMutations({
+        runIfConfirmed: () => {
+          let turning = {
+            oldMode: this._regMode,
+            newMode: mode,
+          } as AdRegTurningMode;
+          let canceled = this.callTryListeners(AdRegTurn.TURN_MODE, turning);
+          if (canceled) {
+            reject(canceled);
+          }
+          this.turnMode(mode);
+          this.callDidListeners(AdRegTurn.TURN_MODE, turning);
+          resolve(turning);
+        },
+        runIfCanceled: () => {
+          reject(canceledByMutations);
+        },
+      });
+    });
   }
 
   private turnMode(mode: AdRegMode) {
@@ -150,23 +161,31 @@ export class AdRegister extends QinColumn {
     this._regMode = mode;
   }
 
-  public tryNotice(row: number, values: string[]): AdRegTryCanceled {
-    let canceled = this.tryTurnMode(AdRegMode.NOTICE);
-    if (canceled) return canceled;
-    let turning = {
-      oldRow: this._seeRow,
-      newRow: row,
-    } as AdRegTurningNotice;
-    canceled = this.callTryListeners(AdRegTurn.TURN_NOTICE, turning);
-    if (canceled) return canceled;
-    for (let i = 0; i < values.length; i++) {
-      this._model.setData(i, values[i]);
-    }
-    this._seeRow = row;
-    this._table.select(row);
-    this.turnMode(AdRegMode.NOTICE);
-    this.callDidListeners(AdRegTurn.TURN_NOTICE, turning);
-    return null;
+  public tryNotice(row: number, values: string[]): Promise<AdRegTurningNotice> {
+    return new Promise<AdRegTurningNotice>((resolve, reject) => {
+      this.tryTurnMode(AdRegMode.NOTICE)
+        .then(() => {
+          let turning = {
+            oldRow: this._seeRow,
+            newRow: row,
+          } as AdRegTurningNotice;
+          let canceled = this.callTryListeners(AdRegTurn.TURN_NOTICE, turning);
+          if (canceled) {
+            reject(canceled);
+          }
+          for (let i = 0; i < values.length; i++) {
+            this._model.setData(i, values[i]);
+          }
+          this._seeRow = row;
+          this._table.select(row);
+          this.turnMode(AdRegMode.NOTICE);
+          this.callDidListeners(AdRegTurn.TURN_NOTICE, turning);
+          resolve(turning);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
   }
 
   public tryGoFirst() {
@@ -245,31 +264,30 @@ export class AdRegister extends QinColumn {
 
   public tryCancel() {
     if (this.regMode === AdRegMode.INSERT) {
-      this.checkForMutations(() => this._model.clean());
+      this.checkForMutations({ runIfConfirmed: () => this._model.clean() });
     } else if (this.regMode === AdRegMode.SEARCH) {
       this._search.clean();
     } else if (this.regMode === AdRegMode.MUTATE) {
-      this.checkForMutations(() => {
-        this._model.undoMutations();
-        this.tryTurnMode(AdRegMode.NOTICE);
-      });
+      this.tryTurnMode(AdRegMode.NOTICE);
     }
   }
 
   public tryDelete() {}
 
-  private checkForMutations(runIfOk: () => void) {
+  private checkForMutations(checked: CheckedForMutations) {
     const mutations = this._model.hasMutations();
     if (mutations) {
       let message =
         "There are mutations on:\n" + mutations.join(", ") + "\nShould we continue?";
       this.qinpel.jobbed.showDialog(message).then((confirmed) => {
         if (confirmed) {
-          runIfOk();
+          checked.runIfConfirmed();
+        } else if (checked.runIfCanceled) {
+          checked.runIfCanceled();
         }
       });
     } else {
-      runIfOk();
+      checked.runIfConfirmed();
     }
   }
 
@@ -408,6 +426,10 @@ export type AdRegTryCanceled = {
   why: string;
 };
 
+const canceledByMutations = {
+  why: "The user canceled this action to not loose his mutations.",
+} as AdRegTryCanceled;
+
 export type AdRegTryCaller = (turning: AdRegTurning) => AdRegTryCanceled;
 export type AdRegDidCaller = (turning: AdRegTurning) => void;
 
@@ -415,4 +437,9 @@ export type AdRegListener = {
   event: AdRegTurn;
   onTry?: AdRegTryCaller;
   onDid?: AdRegDidCaller;
+};
+
+type CheckedForMutations = {
+  runIfConfirmed: () => void;
+  runIfCanceled?: () => void;
 };
