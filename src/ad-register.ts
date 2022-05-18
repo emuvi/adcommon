@@ -19,8 +19,7 @@ export class AdRegister extends QinColumn {
   private _regMode: AdRegMode;
   private _regView: AdRegView;
 
-  private _seeRow: number;
-  private _seeValues: string[];
+  private _seeRow: number = -1;
 
   private _listener = new Array<AdRegListener>();
 
@@ -156,27 +155,51 @@ export class AdRegister extends QinColumn {
     if (canceled) return canceled;
     let turning = {
       oldRow: this._seeRow,
-      oldValues: this._seeValues,
       newRow: row,
-      newValues: values,
     } as AdRegTurningNotice;
     canceled = this.callTryListeners(AdRegTurn.TURN_NOTICE, turning);
     if (canceled) return canceled;
     for (let i = 0; i < values.length; i++) {
       this._model.setData(i, values[i]);
     }
+    this._seeRow = row;
     this.turnMode(AdRegMode.NOTICE);
     this.callDidListeners(AdRegTurn.TURN_NOTICE, turning);
     return null;
   }
 
-  public tryGoFirst() {}
+  public tryGoFirst() {
+    if (this._table.getLinesSize() > 0) {
+      let values = this._table.getLine(0);
+      this.tryNotice(0, values);
+    }
+  }
 
-  public tryGoPrior() {}
+  public tryGoPrior() {
+    let size = this._table.getLinesSize();
+    let attempt = this._seeRow - 1;
+    if (attempt >= 0 && attempt < size) {
+      let values = this._table.getLine(attempt);
+      this.tryNotice(attempt, values);
+    }
+  }
 
-  public tryGoNext() {}
+  public tryGoNext() {
+    let size = this._table.getLinesSize();
+    let attempt = this._seeRow + 1;
+    if (attempt < size) {
+      let values = this._table.getLine(attempt);
+      this.tryNotice(attempt, values);
+    }
+  }
 
-  public tryGoLast() {}
+  public tryGoLast() {
+    let size = this._table.getLinesSize();
+    if (size > 0) {
+      let values = this._table.getLine(size - 1);
+      this.tryNotice(size - 1, values);
+    }
+  }
 
   public tryMutate() {
     let canceled = this.tryTurnMode(AdRegMode.MUTATE);
@@ -375,9 +398,7 @@ export type AdRegTurningView = {
 
 export type AdRegTurningNotice = {
   oldRow: number;
-  oldValues: string[];
   newRow: number;
-  newValues: string[];
 };
 
 export type AdRegTurning = AdRegTurningMode | AdRegTurningView | AdRegTurningNotice;
