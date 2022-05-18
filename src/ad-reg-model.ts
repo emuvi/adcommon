@@ -52,13 +52,13 @@ export class AdRegModel {
 
   public turnReadOnly() {
     for (let field of this._fields) {
-      field.edit.turnReadOnly();
+      field.turnReadOnly();
     }
   }
 
   public turnEditable() {
     for (let field of this._fields) {
-      field.edit.turnEditable();
+      field.turnEditable();
     }
   }
 
@@ -85,11 +85,7 @@ export class AdRegModel {
     return new Promise<AdInsert>((resolve, reject) => {
       let valueds = new Array<AdValued>();
       for (let field of this._fields) {
-        valueds.push({
-          name: field.name,
-          type: field.edit.getNature(),
-          data: field.edit.getData(),
-        });
+        valueds.push(field.valued);
       }
       let insert = {
         registry: this._reg.registry,

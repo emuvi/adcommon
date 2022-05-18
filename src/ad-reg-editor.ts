@@ -1,4 +1,4 @@
-import { QinColumn, QinField, QinLine, QinPanel, QinTabs } from "qinpel-cps";
+import { QinColumn, QinLine, QinPanel, QinTabs } from "qinpel-cps";
 import { AdField } from "./ad-field";
 import { AdRegister } from "./ad-register";
 
@@ -38,12 +38,6 @@ export class AdRegEditor extends QinPanel {
     if (this._line == null) {
       this.addLine();
     }
-    const editor = field.edit;
-    if (field.title) {
-      const titled = new QinField(field.title, editor);
-      titled.install(this._line);
-    } else {
-      editor.install(this._line);
-    }
+    field.install(this._line);
   }
 }

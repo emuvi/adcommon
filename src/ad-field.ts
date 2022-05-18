@@ -1,4 +1,4 @@
-import { QinEdit, QinMutants, QinMutantsArm } from "qinpel-cps";
+import { QinBase, QinEdit, QinField, QinMutants, QinMutantsArm } from "qinpel-cps";
 import { AdTyped } from "./ad-typed";
 import { AdValued } from "./ad-valued";
 
@@ -29,7 +29,7 @@ export class AdField {
     this._edit = QinMutantsArm.newEdit(this._kind, this._options);
     this._typed = {
       name: this._name,
-      type: this.edit.getNature(),
+      type: this._edit.getNature(),
       alias: this._alias,
     };
   }
@@ -58,10 +58,6 @@ export class AdField {
     return this._key;
   }
 
-  public get edit(): QinEdit {
-    return this._edit;
-  }
-
   public get typed(): AdTyped {
     return this._typed;
   }
@@ -74,7 +70,11 @@ export class AdField {
   }
 
   public get data(): any {
-    return this._data;
+    let result = this._edit.getData();
+    if (result === "") {
+      result = null;
+    }
+    return result;
   }
 
   public set data(newData: any) {
@@ -82,9 +82,19 @@ export class AdField {
     this._data = newData;
   }
 
+  public install(on: QinBase) {
+    if (this._title) {
+      const titled = new QinField(this._title, this._edit);
+      titled.install(on);
+    } else {
+      this._edit.install(on);
+    }
+  }
+
   public hasMutations(): boolean {
-    // [ TODO ] - It is always returning true.
-    return this._data != this._edit.getData();
+    let early = this._data;
+    let byNow = this.data;
+    return early != byNow;
   }
 
   public undoMutations() {
@@ -93,6 +103,14 @@ export class AdField {
 
   public clean() {
     this.data = null;
+  }
+
+  public turnReadOnly() {
+    this._edit.turnReadOnly();
+  }
+
+  public turnEditable() {
+    this._edit.turnEditable();
   }
 
   public focus() {

@@ -47,14 +47,7 @@ export class AdRegister extends QinColumn {
     this._bar.install(this);
     this._body.stack(this._editor);
     this._body.stack(this._search);
-    if (
-      expect.scopes.find((scope) => scope === AdScope.ALL) ||
-      expect.scopes.find((scope) => scope === AdScope.INSERT)
-    ) {
-      this.tryTurnMode(AdRegMode.INSERT);
-    } else {
-      this.tryTurnMode(AdRegMode.SEARCH);
-    }
+    this.prepare();
     this.viewVertical();
     this._body.style.putAsFlexMax();
     this._editor.style.putAsFlexMax();
@@ -63,6 +56,17 @@ export class AdRegister extends QinColumn {
     this._bar.tabIndex = 0;
     this._body.tabIndex = 1;
     this._table.tabIndex = 2;
+  }
+
+  public prepare() {
+    this._model.clean();
+    if (
+      this._expect.scopes.find((scope) => scope === AdScope.ALL || scope === AdScope.INSERT)
+    ) {
+      this.tryTurnMode(AdRegMode.INSERT);
+    } else {
+      this.tryTurnMode(AdRegMode.SEARCH);
+    }
   }
 
   public get module(): AdModule {
