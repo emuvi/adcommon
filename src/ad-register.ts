@@ -332,9 +332,15 @@ export class AdRegister extends QinColumn {
                 if (canceled) {
                   reject(canceled);
                 }
-                console.log("Let's make this deletion!");
-                this.callDidListeners(AdRegTurn.TURN_DELETE, turning);
-                resolve(turning);
+                this._model
+                  .delete()
+                  .then(() => {
+                    this.callDidListeners(AdRegTurn.TURN_DELETE, turning);
+                    resolve(turning);
+                  })
+                  .catch((err) => {
+                    reject(err);
+                  });
               }
             })
             .catch((err) => {

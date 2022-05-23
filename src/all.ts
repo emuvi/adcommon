@@ -1,3 +1,4 @@
+export { AdDelete } from './ad-delete';
 export { AdExpect } from './ad-expect';
 export { AdExpectSet } from './ad-expect';
 export { AdField } from './ad-field';
