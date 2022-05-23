@@ -1,4 +1,5 @@
 import { AdField } from "./ad-field";
+import { AdFilter, AdFilterLikes, AdFilterSeems, AdFilterTies } from "./ad-filter";
 import { AdInsert } from "./ad-insert";
 import { AdRegister } from "./ad-register";
 import { AdTyped } from "./ad-typed";
@@ -100,5 +101,21 @@ export class AdRegModel {
           reject(err);
         });
     });
+  }
+
+  private getKeyFieldsFilter(): AdFilter[] {
+    let result: AdFilter[] = [];
+    for (let field of this._fields) {
+      if (field.key) {
+        let filter = new AdFilter({
+          seems: AdFilterSeems.SAME,
+          likes: AdFilterLikes.EQUALS,
+          valued: field.valued,
+          ties: AdFilterTies.AND,
+        });
+        result.push(filter);
+      }
+    }
+    return result;
   }
 }
