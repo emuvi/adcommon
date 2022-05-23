@@ -335,6 +335,7 @@ export class AdRegister extends QinColumn {
                 this._model
                   .delete()
                   .then(() => {
+                    this._table.delLine(this._seeRow);
                     this.callDidListeners(AdRegTurn.TURN_DELETE, turning);
                     resolve(turning);
                   })
