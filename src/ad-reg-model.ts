@@ -1,3 +1,4 @@
+import { AdDelete } from "./ad-delete";
 import { AdField } from "./ad-field";
 import { AdFilter, AdFilterLikes, AdFilterSeems, AdFilterTies } from "./ad-filter";
 import { AdInsert } from "./ad-insert";
@@ -96,6 +97,24 @@ export class AdRegModel {
         .post("/reg/new", insert)
         .then((_) => {
           resolve(insert);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+
+  public async delete(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      let deleting = {
+        registry: this._reg.registry,
+        filters: this.getKeyFieldsFilter(),
+        limit: 1,
+      } as AdDelete;
+      this._reg.qinpel.chief.talk
+        .post("/reg/del", deleting)
+        .then((_) => {
+          resolve(true);
         })
         .catch((err) => {
           reject(err);
