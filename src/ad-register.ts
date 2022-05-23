@@ -321,15 +321,25 @@ export class AdRegister extends QinColumn {
             reject({ why: "No selected row to delete" });
             return;
           }
-          let turning = {
-            seeRow: this._seeRow,
-          } as AdRegTurningDelete;
-          let canceled = this.callTryListeners(AdRegTurn.TURN_DELETE, turning);
-          if (canceled) {
-            reject(canceled);
-          }
-          this.callDidListeners(AdRegTurn.TURN_DELETE, turning);
-          resolve(turning);
+          this.qinpel.jobbed
+            .showDialog("Do you really want to delete?")
+            .then((want) => {
+              if (want) {
+                let turning = {
+                  seeRow: this._seeRow,
+                } as AdRegTurningDelete;
+                let canceled = this.callTryListeners(AdRegTurn.TURN_DELETE, turning);
+                if (canceled) {
+                  reject(canceled);
+                }
+                console.log("Let's make this deletion!");
+                this.callDidListeners(AdRegTurn.TURN_DELETE, turning);
+                resolve(turning);
+              }
+            })
+            .catch((err) => {
+              reject(err);
+            });
         },
         runIfCanceled: () => {
           reject(canceledByMutations);
