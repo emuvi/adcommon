@@ -83,20 +83,20 @@ export class AdRegModel {
     }
   }
 
-  public async insert(): Promise<AdInsert> {
-    return new Promise<AdInsert>((resolve, reject) => {
+  public async insert(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
       let valueds = new Array<AdValued>();
       for (let field of this._fields) {
         valueds.push(field.valued);
       }
-      let insert = {
+      let inserting = {
         registry: this._reg.registry,
         valueds: valueds,
       } as AdInsert;
       this._reg.qinpel.chief.talk
-        .post("/reg/new", insert)
+        .post("/reg/new", inserting)
         .then((_) => {
-          resolve(insert);
+          resolve(true);
         })
         .catch((err) => {
           reject(err);
