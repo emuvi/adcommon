@@ -208,6 +208,7 @@ export class AdRegister extends QinColumn {
           }
           this.setRowAndValues(row, values);
           this.callDidListeners(AdRegTurn.TURN_NOTICE, turningNotice);
+          resolve(turningNotice);
         },
         runIfCanceled: () => {
           reject(canceledByMutations);
