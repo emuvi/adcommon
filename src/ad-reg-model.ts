@@ -83,8 +83,8 @@ export class AdRegModel {
     }
   }
 
-  public async insert(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+  public async insert(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
       let valueds = new Array<AdValued>();
       for (let field of this._fields) {
         valueds.push(field.valued);
@@ -96,7 +96,7 @@ export class AdRegModel {
       this._reg.qinpel.chief.talk
         .post("/reg/new", inserting)
         .then((_) => {
-          resolve(true);
+          resolve();
         })
         .catch((err) => {
           reject(err);
@@ -104,8 +104,8 @@ export class AdRegModel {
     });
   }
 
-  public async delete(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+  public async delete(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
       let deleting = {
         registry: this._reg.registry,
         filters: this.getKeyFieldsFilter(),
@@ -114,7 +114,7 @@ export class AdRegModel {
       this._reg.qinpel.chief.talk
         .post("/reg/del", deleting)
         .then((_) => {
-          resolve(true);
+          resolve();
         })
         .catch((err) => {
           reject(err);
