@@ -104,11 +104,19 @@ export class AdRegBar extends QinLine {
 
   private initMode() {
     this._qinMode.install(this);
-    this._qinInsert.addActionMain((_) => this._reg.tryTurnMode(AdRegMode.INSERT));
-    this._qinSearch.addActionMain((_) => this._reg.tryTurnMode(AdRegMode.SEARCH));
+    this._qinInsert.addActionMain((_) =>
+      this._reg.tryTurnMode(AdRegMode.INSERT).catch((err) => {
+        this.qinpel.jobbed.showError(err, "{adcommon}(ErrCode-000003)");
+      })
+    );
+    this._qinSearch.addActionMain((_) =>
+      this._reg.tryTurnMode(AdRegMode.SEARCH).catch((err) => {
+        this.qinpel.jobbed.showError(err, "{adcommon}(ErrCode-000004)");
+      })
+    );
     this._qinNotice.addActionMain((_) =>
       this._reg.tryTurnMode(AdRegMode.NOTICE).catch((err) => {
-        this.qinpel.jobbed.showAlert(err.toString());
+        this.qinpel.jobbed.showError(err, "{adcommon}(ErrCode-000005)");
       })
     );
     this._reg.addListener({
