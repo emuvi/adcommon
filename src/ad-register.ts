@@ -225,6 +225,10 @@ export class AdRegister extends QinColumn {
     this._table.scrollTo(row);
   }
 
+  private isThereAnyRowSelected(): boolean {
+    return this._seeRow > -1;
+  }
+
   public tryGoFirst() {
     if (this._table.getLinesSize() > 0) {
       let values = this._table.getLine(0);
@@ -309,7 +313,30 @@ export class AdRegister extends QinColumn {
     }
   }
 
-  public tryDelete() {}
+  public tryDelete(): Promise<AdRegTurningDelete> {
+    return new Promise<AdRegTurningDelete>((resolve, reject) => {
+      this.checkForMutations({
+        runIfConfirmed: () => {
+          if (!this.isThereAnyRowSelected()) {
+            reject({ why: "No selected row to delete" });
+            return;
+          }
+          let turning = {
+            seeRow: this._seeRow,
+          } as AdRegTurningDelete;
+          let canceled = this.callTryListeners(AdRegTurn.TURN_DELETE, turning);
+          if (canceled) {
+            reject(canceled);
+          }
+          this.callDidListeners(AdRegTurn.TURN_DELETE, turning);
+          resolve(turning);
+        },
+        runIfCanceled: () => {
+          reject(canceledByMutations);
+        },
+      });
+    });
+  }
 
   private checkForMutations(checked: CheckedForMutations) {
     const mutations = this._model.hasMutations();
@@ -440,6 +467,7 @@ export enum AdRegTurn {
   TURN_MODE = "TURN_MODE",
   TURN_VIEW = "TURN_VIEW",
   TURN_NOTICE = "TURN_NOTICE",
+  TURN_DELETE = "TURN_DELETE",
 }
 
 export type AdRegTurningMode = {
@@ -455,6 +483,10 @@ export type AdRegTurningView = {
 export type AdRegTurningNotice = {
   oldRow: number;
   newRow: number;
+};
+
+export type AdRegTurningDelete = {
+  seeRow: number;
 };
 
 export type AdRegTurning = AdRegTurningMode | AdRegTurningView | AdRegTurningNotice;

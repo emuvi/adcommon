@@ -30,6 +30,7 @@ export { AdRegTurn } from './ad-register';
 export { AdRegTurningMode } from './ad-register';
 export { AdRegTurningView } from './ad-register';
 export { AdRegTurningNotice } from './ad-register';
+export { AdRegTurningDelete } from './ad-register';
 export { AdRegTurning } from './ad-register';
 export { AdRegTryCanceled } from './ad-register';
 export { AdRegTryCaller } from './ad-register';
