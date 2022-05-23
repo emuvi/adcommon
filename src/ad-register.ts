@@ -186,24 +186,33 @@ export class AdRegister extends QinColumn {
 
   public tryNotice(row: number, values: string[]): Promise<AdRegTurningNotice> {
     return new Promise<AdRegTurningNotice>((resolve, reject) => {
-      this.tryTurnMode(AdRegMode.NOTICE)
-        .then(() => {
-          let turning = {
-            oldRow: this._seeRow,
-            newRow: row,
-          } as AdRegTurningNotice;
-          let canceled = this.callTryListeners(AdRegTurn.TURN_NOTICE, turning);
+      this.checkForMutations({
+        runIfConfirmed: () => {
+          let turningMode = {
+            oldMode: this._regMode,
+            newMode: AdRegMode.NOTICE,
+          } as AdRegTurningMode;
+          let canceled = this.callTryListeners(AdRegTurn.TURN_MODE, turningMode);
           if (canceled) {
             reject(canceled);
           }
-          this.setRowAndValues(row, values);
           this.turnMode(AdRegMode.NOTICE);
-          this.callDidListeners(AdRegTurn.TURN_NOTICE, turning);
-          resolve(turning);
-        })
-        .catch((err) => {
-          reject(err);
-        });
+          this.callDidListeners(AdRegTurn.TURN_MODE, turningMode);
+          let turningNotice = {
+            oldRow: this._seeRow,
+            newRow: row,
+          } as AdRegTurningNotice;
+          let canceledNotice = this.callTryListeners(AdRegTurn.TURN_NOTICE, turningNotice);
+          if (canceledNotice) {
+            reject(canceledNotice);
+          }
+          this.setRowAndValues(row, values);
+          this.callDidListeners(AdRegTurn.TURN_NOTICE, turningNotice);
+        },
+        runIfCanceled: () => {
+          reject(canceledByMutations);
+        },
+      });
     });
   }
 
