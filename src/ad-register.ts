@@ -130,8 +130,8 @@ export class AdRegister extends QinColumn {
 
   public tryTurnMode(mode: AdRegMode): Promise<AdRegTurningMode> {
     return new Promise<AdRegTurningMode>((resolve, reject) => {
-      this.checkForMutations({
-        runIfConfirmed: () => {
+      this.checkForMutations()
+        .then(() => {
           let turning = {
             oldMode: this._regMode,
             newMode: mode,
@@ -149,11 +149,10 @@ export class AdRegister extends QinColumn {
           this.turnMode(mode);
           this.callDidListeners(AdRegTurn.TURN_MODE, turning);
           resolve(turning);
-        },
-        runIfCanceled: () => {
-          reject(canceledByMutations);
-        },
-      });
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   }
 
@@ -186,8 +185,8 @@ export class AdRegister extends QinColumn {
 
   public tryNotice(row: number, values: string[]): Promise<AdRegTurningNotice> {
     return new Promise<AdRegTurningNotice>((resolve, reject) => {
-      this.checkForMutations({
-        runIfConfirmed: () => {
+      this.checkForMutations()
+        .then(() => {
           let turningMode = {
             oldMode: this._regMode,
             newMode: AdRegMode.NOTICE,
@@ -209,11 +208,10 @@ export class AdRegister extends QinColumn {
           this.setRowAndValues(row, values);
           this.callDidListeners(AdRegTurn.TURN_NOTICE, turningNotice);
           resolve(turningNotice);
-        },
-        runIfCanceled: () => {
-          reject(canceledByMutations);
-        },
-      });
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   }
 
@@ -232,17 +230,16 @@ export class AdRegister extends QinColumn {
 
   public unselectAnyRow(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.checkForMutations({
-        runIfConfirmed: () => {
+      this.checkForMutations()
+        .then(() => {
           this._seeRow = -1;
           this._table.unselectAll();
           this._model.clean();
           resolve();
-        },
-        runIfCanceled: () => {
-          reject(canceledByMutations);
-        },
-      });
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   }
 
@@ -331,7 +328,7 @@ export class AdRegister extends QinColumn {
 
   public tryCancel() {
     if (this.regMode === AdRegMode.INSERT) {
-      this.checkForMutations({ runIfConfirmed: () => this._model.clean() });
+      this.checkForMutations().then((_) => this._model.clean());
     } else if (this.regMode === AdRegMode.SEARCH) {
       this._search.clean();
     } else if (this.regMode === AdRegMode.MUTATE) {
@@ -341,8 +338,8 @@ export class AdRegister extends QinColumn {
 
   public tryDelete(): Promise<AdRegTurningDelete> {
     return new Promise<AdRegTurningDelete>((resolve, reject) => {
-      this.checkForMutations({
-        runIfConfirmed: () => {
+      this.checkForMutations()
+        .then(() => {
           if (!this.isThereAnyRowSelected()) {
             reject({ why: "No selected row to delete" });
             return;
@@ -373,29 +370,30 @@ export class AdRegister extends QinColumn {
             .catch((err) => {
               reject(err);
             });
-        },
-        runIfCanceled: () => {
-          reject(canceledByMutations);
-        },
-      });
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   }
 
-  private checkForMutations(checked: CheckedForMutations) {
-    const mutations = this._model.hasMutations();
-    if (mutations) {
-      let message =
-        "There are mutations on:\n" + mutations.join(", ") + "\nShould we continue?";
-      this.qinpel.jobbed.showDialog(message).then((confirmed) => {
-        if (confirmed) {
-          checked.runIfConfirmed();
-        } else if (checked.runIfCanceled) {
-          checked.runIfCanceled();
-        }
-      });
-    } else {
-      checked.runIfConfirmed();
-    }
+  private checkForMutations(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const mutations = this._model.hasMutations();
+      if (mutations) {
+        let message =
+          "There are mutations on:\n" + mutations.join(", ") + "\nShould we continue?";
+        this.qinpel.jobbed.showDialog(message).then((confirmed) => {
+          if (confirmed) {
+            resolve();
+          } else {
+            reject(canceledByMutations);
+          }
+        });
+      } else {
+        resolve();
+      }
+    });
   }
 
   public displayInfo(message: string) {
@@ -561,9 +559,4 @@ export type AdRegListener = {
   event: AdRegTurn;
   onTry?: AdRegTryCaller;
   onDid?: AdRegDidCaller;
-};
-
-type CheckedForMutations = {
-  runIfConfirmed: () => void;
-  runIfCanceled?: () => void;
 };
