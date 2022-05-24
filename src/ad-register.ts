@@ -313,6 +313,8 @@ export class AdRegister extends QinColumn {
           this._model.clean();
           this.focusFirstField();
           this.displayInfo("Inserted: " + JSON.stringify(res));
+          let values = res.valueds.map((valued) => valued.data);
+          this._table.addLine(values);
           resolve();
         })
         .catch((err) => {

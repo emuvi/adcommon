@@ -83,8 +83,8 @@ export class AdRegModel {
     }
   }
 
-  public async insert(): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+  public async insert(): Promise<AdInsert> {
+    return new Promise<AdInsert>((resolve, reject) => {
       let valueds = new Array<AdValued>();
       for (let field of this._fields) {
         valueds.push(field.valued);
@@ -96,7 +96,7 @@ export class AdRegModel {
       this._reg.qinpel.chief.talk
         .post("/reg/new", inserting)
         .then((_) => {
-          resolve();
+          resolve(inserting);
         })
         .catch((err) => {
           reject(err);
