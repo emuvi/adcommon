@@ -230,6 +230,22 @@ export class AdRegister extends QinColumn {
     return this._seeRow > -1;
   }
 
+  public unselectAnyRow(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.checkForMutations({
+        runIfConfirmed: () => {
+          this._seeRow = -1;
+          this._table.unselectAll();
+          this._model.clean();
+          resolve();
+        },
+        runIfCanceled: () => {
+          reject(canceledByMutations);
+        },
+      });
+    });
+  }
+
   public tryGoFirst() {
     if (this._table.getLinesSize() > 0) {
       let values = this._table.getLine(0);

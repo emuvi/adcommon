@@ -26,13 +26,20 @@ export class AdRegLoader {
     QinTool.qinpel.talk
       .post("/reg/ask", select)
       .then((res) => {
-        this._reg.table.delLines();
-        let rows = QinTool.qinpel.our.soul.body.getCSVRows(res.data);
-        if (rows) {
-          for (let row of rows) {
-            this._reg.table.addLine(row);
-          }
-        }
+        this._reg
+          .unselectAnyRow()
+          .then(() => {
+            this._reg.table.delLines();
+            let rows = QinTool.qinpel.our.soul.body.getCSVRows(res.data);
+            if (rows) {
+              for (let row of rows) {
+                this._reg.table.addLine(row);
+              }
+            }
+          })
+          .catch((err) => {
+            QinTool.qinpel.jobbed.statusError(err, "{adcommon}(ErrCode-000007)");
+          });
       })
       .catch((err) => {
         QinTool.qinpel.jobbed.statusError(err, "{adcommon}(ErrCode-000002)");
