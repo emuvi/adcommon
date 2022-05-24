@@ -291,34 +291,41 @@ export class AdRegister extends QinColumn {
     return null;
   }
 
-  public tryConfirm() {
+  public tryConfirm(): Promise<void> {
     if (this.regMode === AdRegMode.SEARCH) {
-      this.trySelect();
+      return this.trySelect();
     } else if (this.regMode === AdRegMode.INSERT) {
-      this.tryInsert();
+      return this.tryInsert();
     } else if (this.regMode === AdRegMode.MUTATE) {
-      this.tryUpdate();
+      return this.tryUpdate();
     }
   }
 
-  private trySelect() {
-    this.loader.load();
+  private trySelect(): Promise<void> {
+    return this.loader.load();
   }
 
-  private tryInsert() {
-    this.model
-      .insert()
-      .then((res) => {
-        this._model.clean();
-        this.focusFirstField();
-        this.qinpel.jobbed.statusInfo("Inserted: " + JSON.stringify(res));
-      })
-      .catch((err) => {
-        this.qinpel.jobbed.statusError(err, "{adcommon}(ErrCode-000001)");
-      });
+  private tryInsert(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.model
+        .insert()
+        .then((res) => {
+          this._model.clean();
+          this.focusFirstField();
+          this.qinpel.jobbed.statusInfo("Inserted: " + JSON.stringify(res));
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
   }
 
-  private tryUpdate() {}
+  private tryUpdate(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      reject("Not implemented");
+    });
+  }
 
   public tryCancel() {
     if (this.regMode === AdRegMode.INSERT) {

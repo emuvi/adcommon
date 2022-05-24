@@ -140,7 +140,11 @@ export class AdRegBar extends QinLine {
     this._qinMutate.install(this);
     this._qinMutate.addActionMain((_) => this._reg.tryMutate());
     this._qinConfirm.install(this);
-    this._qinConfirm.addActionMain((_) => this._reg.tryConfirm());
+    this._qinConfirm.addActionMain((_) =>
+      this._reg.tryConfirm().catch((err) => {
+        this.qinpel.jobbed.showError(err, "{adcommon}(ErrCode-000007)");
+      })
+    );
     this._qinCancel.install(this);
     this._qinCancel.addActionMain((_) => this._reg.tryCancel());
     this._qinDelete.install(this);
