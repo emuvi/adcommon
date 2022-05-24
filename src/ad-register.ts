@@ -312,7 +312,7 @@ export class AdRegister extends QinColumn {
         .then((res) => {
           this._model.clean();
           this.focusFirstField();
-          this.qinpel.jobbed.statusInfo("Inserted: " + JSON.stringify(res));
+          this.displayInfo("Inserted: " + JSON.stringify(res));
           resolve();
         })
         .catch((err) => {
@@ -393,6 +393,18 @@ export class AdRegister extends QinColumn {
       });
     } else {
       checked.runIfConfirmed();
+    }
+  }
+
+  public displayInfo(message: string) {
+    this.qinpel.jobbed.statusInfo(message);
+  }
+
+  public displayError(error: any, origin: string) {
+    if (error == canceledByMutations) {
+      this.qinpel.jobbed.statusError(error, origin);
+    } else {
+      this.qinpel.jobbed.showError(error, origin);
     }
   }
 
