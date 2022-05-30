@@ -203,6 +203,7 @@ export class AdRegBar extends QinLine {
           this._qinGoPrior.unDisplay();
           this._qinGoNext.unDisplay();
           this._qinGoLast.unDisplay();
+          this._qinMutate.unDisplay();
           this._qinConfirm.reDisplay();
           this._qinCancel.reDisplay();
           this._qinDelete.reDisplay();
