@@ -105,6 +105,10 @@ export class AdField {
     this.data = null;
   }
 
+  public saved() {
+    this._data = this.data;
+  }
+
   public turnReadOnly() {
     this._edit.turnReadOnly();
   }

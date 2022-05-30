@@ -310,7 +310,7 @@ export class AdRegister extends QinColumn {
           this._model.clean();
           this.focusFirstField();
           this.displayInfo("Inserted: " + JSON.stringify(res));
-          let values = res.valueds.map((valued) => valued.data);
+          let values = res.map((valued) => valued.data);
           this._table.addLine(values);
           resolve();
         })
@@ -322,7 +322,19 @@ export class AdRegister extends QinColumn {
 
   private tryUpdate(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      reject("Not implemented");
+      this.model
+        .update()
+        .then((res) => {
+          this.focusFirstField();
+          this.displayInfo("Updated: " + JSON.stringify(res));
+          let values = res.map((valued) => valued.data);
+          this._table.setLine(this._seeRow, values);
+          this.tryTurnMode(AdRegMode.NOTICE);
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   }
 

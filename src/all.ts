@@ -44,4 +44,5 @@ export { AdScope } from './ad-tools';
 export { AdModule } from './ad-tools';
 export { AdTools } from './ad-tools';
 export { AdTyped } from './ad-typed';
+export { AdUpdate } from './ad-update';
 export { AdValued } from './ad-valued';
