@@ -114,6 +114,7 @@ export class AdRegModel {
       this._reg.qinpel.chief.talk
         .post("/reg/del", deleting)
         .then((_) => {
+          this.clean();
           resolve();
         })
         .catch((err) => {

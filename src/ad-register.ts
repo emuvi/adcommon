@@ -360,6 +360,7 @@ export class AdRegister extends QinColumn {
                   .then(() => {
                     this._table.delLine(this._seeRow);
                     this.callDidListeners(AdRegTurn.TURN_DELETE, turning);
+                    this.tryTurnMode(AdRegMode.INSERT);
                     resolve(turning);
                   })
                   .catch((err) => {
