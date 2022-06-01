@@ -233,7 +233,7 @@ export class AdRegister extends QinColumn {
     return this._seeRow > -1;
   }
 
-  public unselectAnyRow(): Promise<void> {
+  public unselectAll(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.checkForMutations()
         .then(() => {
