@@ -1,4 +1,5 @@
 import { QinTool } from "qinpel-cps";
+import { AdApprise } from "./ad-apprise";
 import { AdFilter } from "./ad-filter";
 import { AdRegister } from "./ad-register";
 import { AdSelect } from "./ad-select";
@@ -46,7 +47,7 @@ export class AdRegLoader {
               this._reg.table.delLines();
               let rows = QinTool.qinpel.our.soul.body.getCSVRows(res.data);
               if (rows.length == 0) {
-                this._reg.displayInfo("No results found.");
+                this._reg.displayInfo(AdApprise.NO_RESULTS_FOUND, "{adcommon}(ErrCode-000008)");
               } else {
                 for (let row of rows) {
                   this._reg.table.addLine(row);

@@ -315,7 +315,7 @@ export class AdRegister extends QinColumn {
         .then((res) => {
           this._model.clean();
           this.focusFirstField();
-          this.displayInfo("Inserted: " + JSON.stringify(res));
+          this.displayInfo(AdApprise.INSERTED_REGISTER, "{adcommon}(ErrCode-000009)");
           let values = res.map((valued) => valued.data);
           this._table.addLine(values);
           resolve();
@@ -332,7 +332,7 @@ export class AdRegister extends QinColumn {
         .update()
         .then((res) => {
           this.focusFirstField();
-          this.displayInfo("Updated: " + JSON.stringify(res));
+          this.displayInfo(AdApprise.UPDATED_REGISTER, "{adcommon}(ErrCode-000010)");
           let values = res.map((valued) => valued.data);
           this._table.setLine(this._seeRow, values);
           this.tryTurnMode(AdRegMode.NOTICE);
@@ -415,20 +415,24 @@ export class AdRegister extends QinColumn {
     });
   }
 
-  public displayInfo(message: string) {
-    this.qinpel.jobbed.showInfo(message);
+  public displayInfo(info: any, origin: string) {
+    if (info instanceof AdApprised) {
+      if (info.popup) {
+        this.qinpel.jobbed.showInfo(info, origin);
+      }
+    }
+    this.qinpel.jobbed.statusInfo(info, origin);
   }
 
   public displayError(error: any, origin: string) {
     if (error instanceof AdApprised) {
       if (error.popup) {
         this.qinpel.jobbed.showError(error, origin);
-      } else {
-        this.qinpel.jobbed.statusError(error, origin);
       }
     } else {
       this.qinpel.jobbed.showError(error, origin);
     }
+    this.qinpel.jobbed.statusError(error, origin);
   }
 
   public viewSingle() {

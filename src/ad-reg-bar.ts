@@ -7,6 +7,7 @@ import {
   QinLine,
   QinPopup,
 } from "qinpel-cps";
+import { AdApprise } from "./ad-apprise";
 import { AdRegister, AdRegMode, AdRegTurn, AdRegTurningMode } from "./ad-register";
 
 export class AdRegBar extends QinLine {
@@ -152,7 +153,7 @@ export class AdRegBar extends QinLine {
       this._reg
         .tryDelete()
         .then((_) => {
-          this.qinpel.jobbed.showInfo("Row deleted with success.");
+          this.qinpel.jobbed.showInfo(AdApprise.DELETED_REGISTER, "{adcommon}(ErrCode-000011)");
         })
         .catch((err) => {
           this._reg.displayError(err, "{adcommon}(ErrCode-000006)");
