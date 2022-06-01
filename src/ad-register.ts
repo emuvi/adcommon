@@ -74,6 +74,10 @@ export class AdRegister extends QinColumn {
     return this._module;
   }
 
+  public get base(): AdRegBase {
+    return this._base;
+  }
+
   public get registry(): AdRegistry {
     return this._base.registry;
   }
