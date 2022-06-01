@@ -1,4 +1,5 @@
 import { QinColumn, QinSplitter, QinStack } from "qinpel-cps";
+import { AdApprise, AdApprised } from "./ad-apprise";
 import { AdExpect } from "./ad-expect";
 import { AdField } from "./ad-field";
 import { AdRegBar } from "./ad-reg-bar";
@@ -405,7 +406,7 @@ export class AdRegister extends QinColumn {
           if (confirmed) {
             resolve();
           } else {
-            reject(canceledByMutations);
+            reject(AdApprise.CANCELED_BY_MUTATIONS);
           }
         });
       } else {
@@ -419,8 +420,12 @@ export class AdRegister extends QinColumn {
   }
 
   public displayError(error: any, origin: string) {
-    if (error == canceledByMutations) {
-      this.qinpel.jobbed.statusError(error, origin);
+    if (error instanceof AdApprised) {
+      if (error.popup) {
+        this.qinpel.jobbed.showError(error, origin);
+      } else {
+        this.qinpel.jobbed.statusError(error, origin);
+      }
     } else {
       this.qinpel.jobbed.showError(error, origin);
     }
@@ -562,13 +567,7 @@ export type AdRegTurningDelete = {
 
 export type AdRegTurning = AdRegTurningMode | AdRegTurningView | AdRegTurningNotice;
 
-export type AdRegTryCanceled = {
-  why: string;
-};
-
-const canceledByMutations = {
-  why: "The user canceled this action to not loose his mutations.",
-} as AdRegTryCanceled;
+export type AdRegTryCanceled = AdApprised;
 
 export type AdRegTryCaller = (turning: AdRegTurning) => AdRegTryCanceled;
 export type AdRegDidCaller = (turning: AdRegTurning) => void;
