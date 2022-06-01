@@ -4,7 +4,8 @@ import { AdRegistry } from "./ad-registry";
 export type AdJoined = {
   ties?: AdJoinedTies;
   registry: AdRegistry;
-  filters: AdFilter[];
+  alias?: string;
+  filters?: AdFilter[];
 };
 
 export enum AdJoinedTies {
