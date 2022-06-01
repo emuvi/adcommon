@@ -45,7 +45,9 @@ export class AdRegLoader {
             .then(() => {
               this._reg.table.delLines();
               let rows = QinTool.qinpel.our.soul.body.getCSVRows(res.data);
-              if (rows) {
+              if (rows.length == 0) {
+                this._reg.displayInfo("No results found.");
+              } else {
                 for (let row of rows) {
                   this._reg.table.addLine(row);
                 }

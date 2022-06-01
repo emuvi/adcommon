@@ -415,7 +415,7 @@ export class AdRegister extends QinColumn {
   }
 
   public displayInfo(message: string) {
-    this.qinpel.jobbed.statusInfo(message);
+    this.qinpel.jobbed.showInfo(message);
   }
 
   public displayError(error: any, origin: string) {
