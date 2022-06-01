@@ -14,21 +14,34 @@ export class AdRegLoader {
     return new Promise<void>((resolve, reject) => {
       let registry = this._reg.registry;
       let fields = this._reg.model.typeds;
+      let joins = this._reg.base.joins;
       let filters: AdFilter[] = null;
+      if (this._reg.base.filters) {
+        if (filters == null) {
+          filters = [];
+        }
+        filters.push(...this._reg.base.filters);
+      }
       if (this._reg.expect.filters) {
-        filters = [...this._reg.expect.filters];
+        if (filters == null) {
+          filters = [];
+        }
+        filters.push(...this._reg.expect.filters);
       }
-      let searching = this._reg.search.getFilters();
-      if (searching) {
-        filters = filters || [];
-        filters.push(...searching);
+      let searchingFor = this._reg.search.getFilters();
+      if (searchingFor) {
+        if (filters == null) {
+          filters = [];
+        }
+        filters.push(...searchingFor);
       }
-      let select = { registry, fields, filters } as AdSelect;
+      let orders = this._reg.base.orders;
+      let select = { registry, fields, joins, filters, orders } as AdSelect;
       QinTool.qinpel.talk
         .post("/reg/ask", select)
         .then((res) => {
           this._reg
-            .unselectAnyRow()
+            .unselectAll()
             .then(() => {
               this._reg.table.delLines();
               let rows = QinTool.qinpel.our.soul.body.getCSVRows(res.data);
@@ -37,6 +50,7 @@ export class AdRegLoader {
                   this._reg.table.addLine(row);
                 }
               }
+              resolve();
             })
             .catch((err) => {
               reject(err);
