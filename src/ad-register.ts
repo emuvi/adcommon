@@ -13,8 +13,8 @@ import { AdModule, AdScope } from "./ad-tools";
 
 export class AdRegister extends QinColumn {
   private _module: AdModule;
-  private _base: AdRegBase;
   private _expect: AdExpect;
+  private _base: AdRegBase;
   private _model: AdRegModel;
 
   private _regMode: AdRegMode;
@@ -36,11 +36,11 @@ export class AdRegister extends QinColumn {
 
   private _loader = new AdRegLoader(this);
 
-  public constructor(module: AdModule, base: AdRegBase, expect: AdExpect) {
+  public constructor(module: AdModule, expect: AdExpect, base: AdRegBase) {
     super();
     this._module = module;
-    this._base = base;
     this._expect = expect;
+    this._base = base;
     this._model = new AdRegModel(this);
     this._viewSingle.style.putAsFlexMax();
     this._viewVertical.style.putAsFlexMax();

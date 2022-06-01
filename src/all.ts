@@ -19,6 +19,7 @@ export { AdModules } from './ad-modules';
 export { AdNames } from './ad-names';
 export { AdOrder } from './ad-order';
 export { AdRegBar } from './ad-reg-bar';
+export { AdRegBase } from './ad-reg-base';
 export { AdRegEditor } from './ad-reg-editor';
 export { AdRegLoader } from './ad-reg-loader';
 export { AdRegModel } from './ad-reg-model';
