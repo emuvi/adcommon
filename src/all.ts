@@ -18,6 +18,7 @@ export { AdMenuAct } from './ad-menu';
 export { AdMenuItem } from './ad-menu';
 export { menuStartUp } from './ad-menu';
 export { AdModules } from './ad-modules';
+export { AdNamed } from './ad-named';
 export { AdNames } from './ad-names';
 export { AdOrder } from './ad-order';
 export { AdRegBar } from './ad-reg-bar';

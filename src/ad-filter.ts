@@ -9,11 +9,11 @@ export class AdFilter {
   public ties: AdFilterTies;
 
   constructor(options?: AdFilterSet) {
-    this.seems = options?.seems;
-    this.likes = options?.likes;
+    this.seems = options?.seems ?? AdFilterSeems.SAME;
+    this.likes = options?.likes ?? AdFilterLikes.EQUALS;
     this.valued = options?.valued;
     this.named = options?.named;
-    this.ties = options?.ties;
+    this.ties = options?.ties ?? AdFilterTies.AND;
   }
 }
 
