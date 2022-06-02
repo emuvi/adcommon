@@ -13,6 +13,7 @@ export { AdFilterTies } from './ad-filter';
 export { AdInsert } from './ad-insert';
 export { AdJoined } from './ad-joined';
 export { AdJoinedTies } from './ad-joined';
+export { AdLinked } from './ad-linked';
 export { AdMenu } from './ad-menu';
 export { AdMenuAct } from './ad-menu';
 export { AdMenuItem } from './ad-menu';
