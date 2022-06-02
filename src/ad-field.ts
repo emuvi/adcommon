@@ -3,8 +3,9 @@ import { AdTyped } from "./ad-typed";
 import { AdValued } from "./ad-valued";
 
 export class AdField {
-  private _title: string;
   private _key: boolean;
+  private _foreign: boolean;
+  private _title: string;
   private _name: string;
   private _alias: string;
   private _kind: QinMutants;
@@ -16,12 +17,13 @@ export class AdField {
   private _data: any = null;
 
   constructor(newer: AdFieldSet) {
+    this._key = newer.key ?? false;
+    this._foreign = newer.foreign ?? false;
     this._title = newer.title;
     this._name = newer.name;
     this._alias = newer.alias;
     this._kind = newer.kind;
     this._options = newer.options;
-    this._key = newer.key ?? false;
     this.init();
   }
 
@@ -32,6 +34,14 @@ export class AdField {
       type: this._edit.getNature(),
       alias: this._alias,
     };
+  }
+
+  public get key(): boolean {
+    return this._key;
+  }
+
+  public get foreign(): boolean {
+    return this._foreign;
   }
 
   public get title(): string {
@@ -52,10 +62,6 @@ export class AdField {
 
   public get options(): any {
     return this._options;
-  }
-
-  public get key(): boolean {
-    return this._key;
   }
 
   public get typed(): AdTyped {
@@ -123,10 +129,11 @@ export class AdField {
 }
 
 export type AdFieldSet = {
+  key?: boolean;
+  foreign?: boolean;
   title?: string;
   name: string;
   alias?: string;
   kind: QinMutants;
   options?: any;
-  key?: boolean;
 };
