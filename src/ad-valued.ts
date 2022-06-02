@@ -2,6 +2,6 @@ import { QinNature } from "qinpel-res";
 
 export type AdValued = {
   name: string;
-  type: QinNature;
+  type?: QinNature;
   data: any;
 };
