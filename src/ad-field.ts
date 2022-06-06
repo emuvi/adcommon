@@ -4,7 +4,6 @@ import { AdValued } from "./ad-valued";
 
 export class AdField {
   private _key: boolean;
-  private _foreign: boolean;
   private _title: string;
   private _name: string;
   private _alias: string;
@@ -18,7 +17,6 @@ export class AdField {
 
   constructor(newer: AdFieldSet) {
     this._key = newer.key ?? false;
-    this._foreign = newer.foreign ?? false;
     this._title = newer.title;
     this._name = newer.name;
     this._alias = newer.alias;
@@ -38,10 +36,6 @@ export class AdField {
 
   public get key(): boolean {
     return this._key;
-  }
-
-  public get foreign(): boolean {
-    return this._foreign;
   }
 
   public get title(): string {
@@ -130,7 +124,6 @@ export class AdField {
 
 export type AdFieldSet = {
   key?: boolean;
-  foreign?: boolean;
   title?: string;
   name: string;
   alias?: string;
