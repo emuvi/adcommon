@@ -69,6 +69,27 @@ export class AdRegister extends QinColumn {
     } else {
       this.tryTurnMode(AdRegMode.SEARCH);
     }
+    this._model.fields.forEach((field) => {
+      if (this.isForeign(field)) {
+        console.log(
+          "foreign field: " +
+            field.name +
+            " [ TODO ] request and sets the foreign data of it when any of the joined table key fields changes"
+        );
+      }
+    });
+  }
+
+  private isForeign(field: AdField): boolean {
+    let dotPos = field.name.indexOf(".");
+    if (dotPos < 0) {
+      return false;
+    }
+    let fieldSource = field.name.substring(0, dotPos);
+    let thisSource = this._base.registry.alias
+      ? this._base.registry.alias
+      : this._base.registry.name;
+    return fieldSource !== thisSource;
   }
 
   public get module(): AdModule {
