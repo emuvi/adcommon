@@ -8,7 +8,7 @@ export class AdRegTable extends QinTable {
     super({ singleSelection: true });
     this._reg = register;
     this.addOnLineMainAct((row, values: string[]) => {
-      this._reg.tryNotice(row, values);
+      this._reg.tryTurnNoticeRow(row, values);
     });
   }
 }

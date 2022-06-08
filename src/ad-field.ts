@@ -14,7 +14,7 @@ export class AdField {
   private _edit: QinEdit<any> = null;
   private _typed: AdTyped = null;
 
-  private _data: any = null;
+  private _value: any = null;
 
   constructor(newer: AdFieldSet) {
     this._key = newer.key ?? false;
@@ -70,7 +70,7 @@ export class AdField {
     return { name, type, data };
   }
 
-  public get data(): any {
+  public get value(): any {
     let result = this._edit.value;
     if (result === "") {
       result = null;
@@ -78,9 +78,9 @@ export class AdField {
     return result;
   }
 
-  public set data(newData: any) {
-    this._edit.value = newData;
-    this._data = newData;
+  public set value(data: any) {
+    this._edit.value = data;
+    this._value = data;
   }
 
   public install(on: QinBase) {
@@ -93,21 +93,21 @@ export class AdField {
   }
 
   public hasMutations(): boolean {
-    let early = this._data;
-    let byNow = this.data;
+    let early = this._value;
+    let byNow = this.value;
     return early != byNow;
   }
 
   public undoMutations() {
-    this._edit.value = this._data;
+    this._edit.value = this._value;
   }
 
   public clean() {
-    this.data = null;
+    this.value = null;
   }
 
   public saved() {
-    this._data = this.data;
+    this._value = this.value;
   }
 
   public turnReadOnly() {

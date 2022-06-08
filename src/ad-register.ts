@@ -23,6 +23,7 @@ export class AdRegister extends QinColumn {
   private _regView: AdRegView;
 
   private _seeRow: number = -1;
+  private _seeValues: string[] = null;
 
   private _listener = new Array<AdRegListener>();
 
@@ -58,47 +59,6 @@ export class AdRegister extends QinColumn {
     this._bar.tabIndex = 0;
     this._body.tabIndex = 1;
     this._table.tabIndex = 2;
-  }
-
-  public prepare() {
-    this._model.clean();
-    if (
-      this._expect.scopes.find((scope) => scope === AdScope.ALL || scope === AdScope.INSERT)
-    ) {
-      this.tryTurnMode(AdRegMode.INSERT);
-    } else {
-      this.tryTurnMode(AdRegMode.SEARCH);
-    }
-    if (this._base.joins) {
-      this._base.joins.forEach((join) => {
-        if (join.filters) {
-          join.filters.forEach((filter) => {
-            if (filter.linked) {
-              let linkedField = this._model.getFieldByName(filter.linked.name);
-              linkedField.addOnChanged((value) => {
-                this.updatedLinkedOfJoin(value, linkedField, join);
-              });
-            }
-          });
-        }
-      });
-    }
-  }
-
-  private updatedLinkedOfJoin(value: any, field: AdField, joined: AdJoined) {
-    console.log("join: " + joined.registry.name + " field: " + field.name + " value: " + value);
-  }
-
-  private isForeign(field: AdField): boolean {
-    let dotPos = field.name.indexOf(".");
-    if (dotPos < 0) {
-      return false;
-    }
-    let fieldSource = field.name.substring(0, dotPos);
-    let thisSource = this._base.registry.alias
-      ? this._base.registry.alias
-      : this._base.registry.name;
-    return fieldSource !== thisSource;
   }
 
   public get module(): AdModule {
@@ -164,27 +124,88 @@ export class AdRegister extends QinColumn {
     this._table.addHead(field.title);
   }
 
-  public tryTurnMode(mode: AdRegMode): Promise<AdRegTurningMode> {
-    return new Promise<AdRegTurningMode>((resolve, reject) => {
-      this.checkForMutations()
-        .then(() => {
-          let turning = {
-            oldMode: this._regMode,
-            newMode: mode,
-          } as AdRegTurningMode;
-          let canceled = this.callTryListeners(AdRegTurn.TURN_MODE, turning);
-          if (canceled) {
-            reject(canceled);
-          }
-          if (mode == AdRegMode.NOTICE) {
-            if (!this.isSeeRowValid()) {
-              reject({ why: "There's no valid row selected to notice." });
-              return;
+  public prepare() {
+    this._model.clean();
+    if (
+      this._expect.scopes.find((scope) => scope === AdScope.ALL || scope === AdScope.INSERT)
+    ) {
+      this.tryTurnMode(AdRegMode.INSERT);
+    } else {
+      this.tryTurnMode(AdRegMode.SEARCH);
+    }
+    if (this._base.joins) {
+      this._base.joins.forEach((join) => {
+        if (join.filters) {
+          join.filters.forEach((filter) => {
+            if (filter.linked) {
+              let linkedField = this._model.getFieldByName(filter.linked.name);
+              console.log("linked: " + filter.linked.name);
+              linkedField.addOnChanged((value) => {
+                this.updatedLinkedOfJoin(value, linkedField, join);
+              });
             }
+          });
+        }
+      });
+    }
+  }
+
+  private updatedLinkedOfJoin(value: any, field: AdField, joined: AdJoined) {
+    console.log("join: " + joined.registry.name + " field: " + field.name + " value: " + value);
+  }
+
+  private isForeign(field: AdField): boolean {
+    let dotPos = field.name.indexOf(".");
+    if (dotPos < 0) {
+      return false;
+    }
+    let fieldSource = field.name.substring(0, dotPos);
+    let thisSource = this._base.registry.alias
+      ? this._base.registry.alias
+      : this._base.registry.name;
+    return fieldSource !== thisSource;
+  }
+
+  public tryTurnInsert(): Promise<AdRegTurningInsert> {
+    return new Promise<AdRegTurningInsert>((resolve, reject) => {
+      this.tryTurnMode(AdRegMode.INSERT)
+        .then(() => {
+          this._model.clean();
+          resolve({} as AdRegTurningInsert);
+        })
+        .catch((err) => reject(err));
+    });
+  }
+
+  public tryTurnSearch(): Promise<AdRegTurningSearch> {
+    return new Promise<AdRegTurningSearch>((resolve, reject) => {
+      this.tryTurnMode(AdRegMode.SEARCH)
+        .then(() => {
+          resolve({} as AdRegTurningInsert);
+        })
+        .catch((err) => reject(err));
+    });
+  }
+
+  public tryTurnNotice(): Promise<AdRegTurningNotice> {
+    return new Promise<AdRegTurningNotice>((resolve, reject) => {
+      if (!this.isSeeRowValid()) {
+        reject({ why: "There's no valid row selected to notice." });
+        return;
+      }
+      this.tryTurnMode(AdRegMode.NOTICE)
+        .then(() => {
+          let turningNotice = {
+            oldRow: this._seeRow,
+            newRow: this._seeRow,
+          } as AdRegTurningNotice;
+          let canceledNotice = this.callTryListeners(AdRegTurn.TURN_NOTICE, turningNotice);
+          if (canceledNotice) {
+            reject(canceledNotice);
           }
-          this.turnMode(mode);
-          this.callDidListeners(AdRegTurn.TURN_MODE, turning);
-          resolve(turning);
+          this.setRowAndValues(this._seeRow, this._seeValues);
+          this.callDidListeners(AdRegTurn.TURN_NOTICE, turningNotice);
+          resolve(turningNotice);
         })
         .catch((err) => {
           reject(err);
@@ -192,47 +213,10 @@ export class AdRegister extends QinColumn {
     });
   }
 
-  private isSeeRowValid(): boolean {
-    return this._seeRow >= 0 && this._seeRow < this._table.getLinesSize();
-  }
-
-  private turnMode(mode: AdRegMode) {
-    if (mode === AdRegMode.INSERT) {
-      this._model.clean();
-    }
-    if (mode === AdRegMode.SEARCH) {
-      this._body.show(this._search);
-    } else {
-      this._body.show(this._editor);
-    }
-    if (mode === AdRegMode.NOTICE) {
-      if (this._seeRow > -1) {
-        let values = this._table.getLine(this._seeRow);
-        if (values) {
-          this.setRowAndValues(this._seeRow, values);
-        }
-      }
-      this._model.turnReadOnly();
-    } else {
-      this._model.turnEditable();
-    }
-    this._regMode = mode;
-  }
-
-  public tryNotice(row: number, values: string[]): Promise<AdRegTurningNotice> {
+  public tryTurnNoticeRow(row: number, values: string[]): Promise<AdRegTurningNotice> {
     return new Promise<AdRegTurningNotice>((resolve, reject) => {
-      this.checkForMutations()
+      this.tryTurnMode(AdRegMode.NOTICE)
         .then(() => {
-          let turningMode = {
-            oldMode: this._regMode,
-            newMode: AdRegMode.NOTICE,
-          } as AdRegTurningMode;
-          let canceled = this.callTryListeners(AdRegTurn.TURN_MODE, turningMode);
-          if (canceled) {
-            reject(canceled);
-          }
-          this.turnMode(AdRegMode.NOTICE);
-          this.callDidListeners(AdRegTurn.TURN_MODE, turningMode);
           let turningNotice = {
             oldRow: this._seeRow,
             newRow: row,
@@ -251,17 +235,70 @@ export class AdRegister extends QinColumn {
     });
   }
 
+  public tryTurnMutate(): Promise<AdRegTurningMutate> {
+    return new Promise<AdRegTurningMutate>((resolve, reject) => {
+      if (!this.isSeeRowValid()) {
+        reject({ why: "There's no valid row selected to mutate." });
+        return;
+      }
+      this.tryTurnMode(AdRegMode.MUTATE)
+        .then(() => {})
+        .catch((err) => reject(err));
+    });
+  }
+
+  private tryTurnMode(mode: AdRegMode): Promise<AdRegTurningMode> {
+    return new Promise<AdRegTurningMode>((resolve, reject) => {
+      this.checkForMutations()
+        .then(() => {
+          let turning = {
+            oldMode: this._regMode,
+            newMode: mode,
+          } as AdRegTurningMode;
+          let canceled = this.callTryListeners(AdRegTurn.TURN_MODE, turning);
+          if (canceled) {
+            reject(canceled);
+          }
+          this.turnMode(mode);
+          this.callDidListeners(AdRegTurn.TURN_MODE, turning);
+          resolve(turning);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+
+  private isSeeRowValid(): boolean {
+    return this._seeRow >= 0 && this._seeRow < this._table.getLinesSize();
+  }
+
   private setRowAndValues(row: number, values: string[]) {
     for (let i = 0; i < values.length; i++) {
-      this._model.setData(i, values[i]);
+      this._model.setValue(i, values[i]);
     }
     this._seeRow = row;
+    this._seeValues = values;
     this._table.select(row);
     this._table.scrollTo(row);
   }
 
   private isThereAnyRowSelected(): boolean {
     return this._seeRow > -1;
+  }
+
+  private turnMode(mode: AdRegMode) {
+    if (mode === AdRegMode.SEARCH) {
+      this._body.show(this._search);
+    } else {
+      this._body.show(this._editor);
+    }
+    if (mode === AdRegMode.NOTICE) {
+      this._model.turnReadOnly();
+    } else {
+      this._model.turnEditable();
+    }
+    this._regMode = mode;
   }
 
   public unselectAll(): Promise<void> {
@@ -282,7 +319,7 @@ export class AdRegister extends QinColumn {
   public tryGoFirst() {
     if (this._table.getLinesSize() > 0) {
       let values = this._table.getLine(0);
-      this.tryNotice(0, values);
+      this.tryTurnNoticeRow(0, values);
     }
   }
 
@@ -291,7 +328,7 @@ export class AdRegister extends QinColumn {
     let attempt = this._seeRow - 1;
     if (attempt >= 0 && attempt < size) {
       let values = this._table.getLine(attempt);
-      this.tryNotice(attempt, values);
+      this.tryTurnNoticeRow(attempt, values);
     }
   }
 
@@ -300,7 +337,7 @@ export class AdRegister extends QinColumn {
     let attempt = this._seeRow + 1;
     if (attempt < size) {
       let values = this._table.getLine(attempt);
-      this.tryNotice(attempt, values);
+      this.tryTurnNoticeRow(attempt, values);
     }
   }
 
@@ -308,20 +345,8 @@ export class AdRegister extends QinColumn {
     let size = this._table.getLinesSize();
     if (size > 0) {
       let values = this._table.getLine(size - 1);
-      this.tryNotice(size - 1, values);
+      this.tryTurnNoticeRow(size - 1, values);
     }
-  }
-
-  public tryMutate() {
-    let canceled = this.tryTurnMode(AdRegMode.MUTATE);
-    if (canceled) return canceled;
-    let turning = {
-      oldMode: this._regMode,
-      newMode: AdRegMode.MUTATE,
-    } as AdRegTurningMode;
-    this.turnMode(AdRegMode.MUTATE);
-    this.callDidListeners(AdRegTurn.TURN_MODE, turning);
-    return null;
   }
 
   public tryConfirm(): Promise<void> {
@@ -574,32 +599,49 @@ export enum AdRegView {
 }
 
 export enum AdRegTurn {
-  TURN_MODE = "TURN_MODE",
   TURN_VIEW = "TURN_VIEW",
+  TURN_MODE = "TURN_MODE",
+  TURN_INSERT = "TURN_INSERT",
   TURN_NOTICE = "TURN_NOTICE",
+  TURN_MUTATE = "TURN_MUTATE",
   TURN_DELETE = "TURN_DELETE",
 }
-
-export type AdRegTurningMode = {
-  oldMode: AdRegMode;
-  newMode: AdRegMode;
-};
 
 export type AdRegTurningView = {
   oldView: AdRegView;
   newView: AdRegView;
 };
 
+export type AdRegTurningMode = {
+  oldMode: AdRegMode;
+  newMode: AdRegMode;
+};
+
+export type AdRegTurningInsert = {};
+
+export type AdRegTurningSearch = {};
+
 export type AdRegTurningNotice = {
   oldRow: number;
   newRow: number;
+};
+
+export type AdRegTurningMutate = {
+  seeRow: number;
 };
 
 export type AdRegTurningDelete = {
   seeRow: number;
 };
 
-export type AdRegTurning = AdRegTurningMode | AdRegTurningView | AdRegTurningNotice;
+export type AdRegTurning =
+  | AdRegTurningView
+  | AdRegTurningMode
+  | AdRegTurningInsert
+  | AdRegTurningSearch
+  | AdRegTurningNotice
+  | AdRegTurningMutate
+  | AdRegTurningDelete;
 
 export type AdRegTryCanceled = AdApprised;
 

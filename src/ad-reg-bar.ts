@@ -106,17 +106,17 @@ export class AdRegBar extends QinLine {
   private initMode() {
     this._qinMode.install(this);
     this._qinInsert.addActionMain((_) =>
-      this._reg.tryTurnMode(AdRegMode.INSERT).catch((err) => {
+      this._reg.tryTurnInsert().catch((err) => {
         this._reg.displayError(err, "{adcommon}(ErrCode-000003)");
       })
     );
     this._qinSearch.addActionMain((_) =>
-      this._reg.tryTurnMode(AdRegMode.SEARCH).catch((err) => {
+      this._reg.tryTurnSearch().catch((err) => {
         this._reg.displayError(err, "{adcommon}(ErrCode-000004)");
       })
     );
     this._qinNotice.addActionMain((_) =>
-      this._reg.tryTurnMode(AdRegMode.NOTICE).catch((err) => {
+      this._reg.tryTurnNotice().catch((err) => {
         this._reg.displayError(err, "{adcommon}(ErrCode-000005)");
       })
     );
@@ -139,7 +139,11 @@ export class AdRegBar extends QinLine {
 
   private initMake() {
     this._qinMutate.install(this);
-    this._qinMutate.addActionMain((_) => this._reg.tryMutate());
+    this._qinMutate.addActionMain((_) =>
+      this._reg.tryTurnMutate().catch((err) => {
+        this._reg.displayError(err, "{adcommon}(ErrCode-000012)");
+      })
+    );
     this._qinConfirm.install(this);
     this._qinConfirm.addActionMain((_) =>
       this._reg.tryConfirm().catch((err) => {
