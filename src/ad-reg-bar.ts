@@ -162,11 +162,11 @@ export class AdRegBar extends QinLine {
   }
 
   private setMode(mode: AdRegMode) {
-    this._qinMode.setData(null);
+    this._qinMode.value = null;
     if (mode) {
       switch (mode) {
         case AdRegMode.INSERT:
-          this._qinMode.setData(this._qinInsert.asset);
+          this._qinMode.value = this._qinInsert.asset;
           this._qinGoFirst.unDisplay();
           this._qinGoPrior.unDisplay();
           this._qinGoNext.unDisplay();
@@ -177,7 +177,7 @@ export class AdRegBar extends QinLine {
           this._qinDelete.unDisplay();
           break;
         case AdRegMode.SEARCH:
-          this._qinMode.setData(this._qinSearch.asset);
+          this._qinMode.value = this._qinSearch.asset;
           this._qinGoFirst.unDisplay();
           this._qinGoPrior.unDisplay();
           this._qinGoNext.unDisplay();
@@ -188,7 +188,7 @@ export class AdRegBar extends QinLine {
           this._qinDelete.unDisplay();
           break;
         case AdRegMode.NOTICE:
-          this._qinMode.setData(this._qinNotice.asset);
+          this._qinMode.value = this._qinNotice.asset;
           this._qinGoFirst.reDisplay();
           this._qinGoPrior.reDisplay();
           this._qinGoNext.reDisplay();
@@ -199,7 +199,7 @@ export class AdRegBar extends QinLine {
           this._qinDelete.unDisplay();
           break;
         case AdRegMode.MUTATE:
-          this._qinMode.setData(this._qinNotice.asset);
+          this._qinMode.value = this._qinNotice.asset;
           this._qinGoFirst.unDisplay();
           this._qinGoPrior.unDisplay();
           this._qinGoNext.unDisplay();

@@ -128,14 +128,14 @@ class SearchClause extends QinLine {
   }
 
   public clean() {
-    this._qinSame.setData(AdFilterSeems.SAME);
-    this._qinLikes.setData(AdFilterLikes.EQUALS);
-    this._qinValue.setData(null);
-    this._qinTies.setData(AdFilterTies.AND);
+    this._qinSame.value = AdFilterSeems.SAME;
+    this._qinLikes.value = AdFilterLikes.EQUALS;
+    this._qinValue.value = null;
+    this._qinTies.value = AdFilterTies.AND;
   }
 
   public getFilter(): AdFilter {
-    let fieldName = this._qinField.getData();
+    let fieldName = this._qinField.value;
     if (!fieldName) {
       return null;
     }
@@ -144,14 +144,14 @@ class SearchClause extends QinLine {
       return null;
     }
     return new AdFilter({
-      seems: this._qinSame.getData() as AdFilterSeems,
-      likes: this._qinLikes.getData() as AdFilterLikes,
+      seems: this._qinSame.value as AdFilterSeems,
+      likes: this._qinLikes.value as AdFilterLikes,
       valued: {
         name: field.typed.alias || field.typed.name,
         type: field.typed.type,
-        data: this._qinValue.getData(),
+        data: this._qinValue.value,
       },
-      ties: this._qinTies.getData() as AdFilterTies,
+      ties: this._qinTies.value as AdFilterTies,
     });
   }
 }

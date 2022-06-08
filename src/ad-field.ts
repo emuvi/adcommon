@@ -1,4 +1,5 @@
 import { QinBase, QinEdit, QinField, QinMutants, QinMutantsArm } from "qinpel-cps";
+import { QinWaiter } from "qinpel-res";
 import { AdTyped } from "./ad-typed";
 import { AdValued } from "./ad-valued";
 
@@ -10,7 +11,7 @@ export class AdField {
   private _kind: QinMutants;
   private _options: any;
 
-  private _edit: QinEdit = null;
+  private _edit: QinEdit<any> = null;
   private _typed: AdTyped = null;
 
   private _data: any = null;
@@ -65,12 +66,12 @@ export class AdField {
   public get valued(): AdValued {
     let name = this._name;
     let type = this._edit.getNature();
-    let data = this._edit.getData();
+    let data = this._edit.value;
     return { name, type, data };
   }
 
   public get data(): any {
-    let result = this._edit.getData();
+    let result = this._edit.value;
     if (result === "") {
       result = null;
     }
@@ -78,7 +79,7 @@ export class AdField {
   }
 
   public set data(newData: any) {
-    this._edit.setData(newData);
+    this._edit.value = newData;
     this._data = newData;
   }
 
@@ -98,7 +99,7 @@ export class AdField {
   }
 
   public undoMutations() {
-    this._edit.setData(this._data);
+    this._edit.value = this._data;
   }
 
   public clean() {
@@ -115,6 +116,14 @@ export class AdField {
 
   public turnEditable() {
     this._edit.turnEditable();
+  }
+
+  public isEditable() {
+    this._edit.isEditable();
+  }
+
+  public addOnChanged(waiter: QinWaiter) {
+    this._edit.addOnChanged(waiter);
   }
 
   public focus() {
