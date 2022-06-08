@@ -2,6 +2,7 @@ import { QinColumn, QinSplitter, QinStack } from "qinpel-cps";
 import { AdApprise, AdApprised } from "./ad-apprise";
 import { AdExpect } from "./ad-expect";
 import { AdField } from "./ad-field";
+import { AdJoined } from "./ad-joined";
 import { AdRegBar } from "./ad-reg-bar";
 import { AdRegBase } from "./ad-reg-base";
 import { AdRegEditor } from "./ad-reg-editor";
@@ -49,7 +50,6 @@ export class AdRegister extends QinColumn {
     this._bar.install(this);
     this._body.stack(this._editor);
     this._body.stack(this._search);
-    this.prepare();
     this.viewVertical();
     this._body.style.putAsFlexMax();
     this._editor.style.putAsFlexMax();
@@ -69,15 +69,24 @@ export class AdRegister extends QinColumn {
     } else {
       this.tryTurnMode(AdRegMode.SEARCH);
     }
-    this._model.fields.forEach((field) => {
-      if (this.isForeign(field)) {
-        console.log(
-          "foreign field: " +
-            field.name +
-            " [ TODO ] request and sets the foreign data of it when any of the joined table key fields changes"
-        );
-      }
-    });
+    if (this._base.joins) {
+      this._base.joins.forEach((join) => {
+        if (join.filters) {
+          join.filters.forEach((filter) => {
+            if (filter.linked) {
+              let linkedField = this._model.getFieldByName(filter.linked.name);
+              linkedField.addOnChanged((value) => {
+                this.updatedLinkedOfJoin(value, linkedField, join);
+              });
+            }
+          });
+        }
+      });
+    }
+  }
+
+  private updatedLinkedOfJoin(value: any, field: AdField, joined: AdJoined) {
+    console.log("join: " + joined.registry.name + " field: " + field.name + " value: " + value);
   }
 
   private isForeign(field: AdField): boolean {
