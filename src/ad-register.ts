@@ -2,6 +2,7 @@ import { QinColumn, QinSplitter, QinStack } from "qinpel-cps";
 import { AdApprise, AdApprised } from "./ad-apprise";
 import { AdExpect } from "./ad-expect";
 import { AdField } from "./ad-field";
+import { AdFilter, AdFilterLikes, AdFilterSeems, AdFilterTies } from "./ad-filter";
 import { AdJoined } from "./ad-joined";
 import { AdRegBar } from "./ad-reg-bar";
 import { AdRegBase } from "./ad-reg-base";
@@ -11,7 +12,9 @@ import { AdRegModel } from "./ad-reg-model";
 import { AdRegSearch } from "./ad-reg-search";
 import { AdRegTable } from "./ad-reg-table";
 import { AdRegistry } from "./ad-registry";
+import { AdSelect } from "./ad-select";
 import { AdModule, AdScope } from "./ad-tools";
+import { AdTyped } from "./ad-typed";
 
 export class AdRegister extends QinColumn {
   private _module: AdModule;
@@ -158,6 +161,47 @@ export class AdRegister extends QinColumn {
       }
     }
     if (toUpdate.length == 0) return;
+    let registry = joined.alias ? { ...joined.registry, alias: joined.alias } : joined.registry;
+    let fields: AdTyped[] = [];
+    for (let field of toUpdate) {
+      fields.push(field.typed);
+    }
+    let filters: AdFilter[] = [];
+    if (joined.filters) {
+      for (let filter of joined.filters) {
+        if (filter.linked) {
+          let fromField = this._model.getFieldByName(filter.linked.name);
+          let thisFilter = new AdFilter({
+            seems: AdFilterSeems.SAME,
+            likes: AdFilterLikes.EQUALS,
+            valued: {
+              name: filter.linked.with,
+              type: fromField.typed.type,
+              data: fromField.valued.data,
+            },
+            ties: AdFilterTies.AND,
+          });
+          filters.push(thisFilter);
+        } else {
+          filters.push(filter);
+        }
+      }
+    }
+    let select = { registry, fields, joins: null, filters, orders: null, limit: 1 } as AdSelect;
+    this.qinpel.talk
+      .post("/reg/ask", select)
+      .then((res) => {
+        let rows = this.qinpel.our.soul.body.getCSVRows(res.data);
+        if (rows.length > 0) {
+          let row = rows[0];
+          for (let i = 0; i < toUpdate.length; i++) {
+            toUpdate[i].value = row[i];
+          }
+        }
+      })
+      .catch((err) => {
+        this.displayError(err, "{adcommon}(ErrCode-000013)");
+      });
   }
 
   public tryTurnInsert(): Promise<AdRegTurningInsert> {
