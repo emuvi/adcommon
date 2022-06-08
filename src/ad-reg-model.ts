@@ -43,8 +43,8 @@ export class AdRegModel {
     return null;
   }
 
-  public setData(index: number, data: any) {
-    this._fields[index].data = data;
+  public setValue(index: number, value: any) {
+    this._fields[index].value = value;
   }
 
   public clean() {
