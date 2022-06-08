@@ -39,6 +39,14 @@ export class AdField {
     return this._key;
   }
 
+  public get source(): string {
+    let dotPos = this._name.indexOf(".");
+    if (dotPos < 0) {
+      return "";
+    }
+    return this._name.substring(0, dotPos);
+  }
+
   public get title(): string {
     return this._title;
   }

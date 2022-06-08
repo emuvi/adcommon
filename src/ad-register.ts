@@ -139,9 +139,8 @@ export class AdRegister extends QinColumn {
           join.filters.forEach((filter) => {
             if (filter.linked) {
               let linkedField = this._model.getFieldByName(filter.linked.name);
-              console.log("linked: " + filter.linked.name);
-              linkedField.addOnChanged((value) => {
-                this.updatedLinkedOfJoin(value, linkedField, join);
+              linkedField.addOnChanged((_) => {
+                this.updateJoined(join);
               });
             }
           });
@@ -150,20 +149,15 @@ export class AdRegister extends QinColumn {
     }
   }
 
-  private updatedLinkedOfJoin(value: any, field: AdField, joined: AdJoined) {
-    console.log("join: " + joined.registry.name + " field: " + field.name + " value: " + value);
-  }
-
-  private isForeign(field: AdField): boolean {
-    let dotPos = field.name.indexOf(".");
-    if (dotPos < 0) {
-      return false;
+  private updateJoined(joined: AdJoined) {
+    let source = joined.alias ?? joined.registry.alias ?? joined.registry.name;
+    let toUpdate: AdField[] = [];
+    for (let field of this._model.fields) {
+      if (field.source === source) {
+        toUpdate.push(field);
+      }
     }
-    let fieldSource = field.name.substring(0, dotPos);
-    let thisSource = this._base.registry.alias
-      ? this._base.registry.alias
-      : this._base.registry.name;
-    return fieldSource !== thisSource;
+    if (toUpdate.length == 0) return;
   }
 
   public tryTurnInsert(): Promise<AdRegTurningInsert> {
