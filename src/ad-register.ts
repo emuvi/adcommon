@@ -145,7 +145,7 @@ export class AdRegister extends QinColumn {
               linkedField.addOnChanged((_) => {
                 this.updateJoined(join);
               });
-              let button = new QinButton({ icon: new QinIcon(QinAsset.FaceInZoom) });
+              let button = new QinButton({ icon: new QinIcon(QinAsset.FaceSearchLink) });
               linkedField.rows.putOn(1, button);
             }
           });
