@@ -1,4 +1,12 @@
-import { QinBase, QinEdit, QinField, QinMutants, QinMutantsArm } from "qinpel-cps";
+import {
+  QinBase,
+  QinEdit,
+  QinField,
+  QinLabel,
+  QinMutants,
+  QinMutantsArm,
+  QinRows,
+} from "qinpel-cps";
 import { QinWaiter } from "qinpel-res";
 import { AdTyped } from "./ad-typed";
 import { AdValued } from "./ad-valued";
@@ -11,6 +19,8 @@ export class AdField {
   private _kind: QinMutants;
   private _options: any;
 
+  private _rows: QinRows;
+  private _label: QinLabel;
   private _edit: QinEdit<any> = null;
   private _typed: AdTyped = null;
 
@@ -27,6 +37,8 @@ export class AdField {
   }
 
   private init() {
+    this._rows = new QinRows({ size: 2 });
+    this._label = new QinLabel(this._title);
     this._edit = QinMutantsArm.newEdit(this._kind, this._options);
     this._typed = {
       name: this._name,
@@ -37,14 +49,6 @@ export class AdField {
 
   public get key(): boolean {
     return this._key;
-  }
-
-  public get source(): string {
-    let dotPos = this._name.indexOf(".");
-    if (dotPos < 0) {
-      return "";
-    }
-    return this._name.substring(0, dotPos);
   }
 
   public get title(): string {
@@ -65,6 +69,18 @@ export class AdField {
 
   public get options(): any {
     return this._options;
+  }
+
+  public get rows(): QinRows {
+    return this._rows;
+  }
+
+  public get label(): QinLabel {
+    return this._label;
+  }
+
+  public get edit(): QinEdit<any> {
+    return this._edit;
   }
 
   public get typed(): AdTyped {
@@ -89,6 +105,14 @@ export class AdField {
   public set value(data: any) {
     this._edit.value = data;
     this._value = data;
+  }
+
+  public get source(): string {
+    let dotPos = this._name.indexOf(".");
+    if (dotPos < 0) {
+      return "";
+    }
+    return this._name.substring(0, dotPos);
   }
 
   public install(on: QinBase) {
