@@ -9,6 +9,7 @@ import {
 } from "qinpel-cps";
 import { AdApprise } from "./ad-apprise";
 import { AdRegister, AdRegMode, AdRegTurn, AdRegTurningMode } from "./ad-register";
+import { AdScope } from "./ad-tools";
 
 export class AdRegBar extends QinLine {
   private _reg: AdRegister;
@@ -45,10 +46,7 @@ export class AdRegBar extends QinLine {
   private _qinSearch = new QinIcon(QinAsset.FaceSearch);
   private _qinNotice = new QinIcon(QinAsset.FaceEye);
 
-  private _qinMode = new QinIconPick({
-    icons: [this._qinInsert, this._qinSearch, this._qinNotice],
-    readOnly: true,
-  });
+  private _qinMode = new QinIconPick({ readOnly: true });
 
   private _qinGoFirst = new QinButton({ icon: new QinIcon(QinAsset.FaceRUpChevronPush) });
   private _qinGoPrior = new QinButton({
@@ -104,7 +102,22 @@ export class AdRegBar extends QinLine {
   }
 
   private initMode() {
-    this._qinMode.install(this);
+    let canChangeMode = false;
+    if (this._reg.hasScope(AdScope.INSERT)) {
+      this._qinMode.addIcon(this._qinInsert);
+      canChangeMode = true;
+    }
+    if (this._reg.hasScope(AdScope.SEARCH)) {
+      this._qinMode.addIcon(this._qinSearch);
+      canChangeMode = true;
+    }
+    if (this._reg.hasScope(AdScope.NOTICE)) {
+      this._qinMode.addIcon(this._qinNotice);
+      canChangeMode = true;
+    }
+    if (canChangeMode) {
+      this._qinMode.install(this);
+    }
     this._qinInsert.addActionMain((_) =>
       this._reg.tryTurnInsert().catch((err) => {
         this._reg.displayError(err, "{adcommon}(ErrCode-000003)");
@@ -197,7 +210,11 @@ export class AdRegBar extends QinLine {
           this._qinGoPrior.reDisplay();
           this._qinGoNext.reDisplay();
           this._qinGoLast.reDisplay();
-          this._qinMutate.reDisplay();
+          if (this._reg.hasScope(AdScope.MUTATE)) {
+            this._qinMutate.reDisplay();
+          } else {
+            this._qinMutate.unDisplay();
+          }
           this._qinConfirm.unDisplay();
           this._qinCancel.unDisplay();
           this._qinDelete.unDisplay();
@@ -211,7 +228,11 @@ export class AdRegBar extends QinLine {
           this._qinMutate.unDisplay();
           this._qinConfirm.reDisplay();
           this._qinCancel.reDisplay();
-          this._qinDelete.reDisplay();
+          if (this._reg.hasScope(AdScope.DELETE)) {
+            this._qinDelete.reDisplay();
+          } else {
+            this._qinDelete.unDisplay();
+          }
           break;
       }
     }

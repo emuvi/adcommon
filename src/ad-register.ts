@@ -22,25 +22,23 @@ export class AdRegister extends QinColumn {
   private _base: AdRegBase;
   private _model: AdRegModel;
 
+  private _body: QinStack;
+  private _viewSingle: QinStack;
+  private _viewVertical: QinSplitter;
+  private _viewHorizontal: QinSplitter;
+
+  private _bar: AdRegBar;
+  private _editor: AdRegEditor;
+  private _search: AdRegSearch;
+  private _table: AdRegTable;
+
+  private _loader: AdRegLoader;
+
   private _regMode: AdRegMode;
   private _regView: AdRegView;
-
   private _seeRow: number = -1;
   private _seeValues: string[] = null;
-
   private _listener = new Array<AdRegListener>();
-
-  private _body = new QinStack();
-  private _viewSingle = new QinStack();
-  private _viewVertical = new QinSplitter({ horizontal: false });
-  private _viewHorizontal = new QinSplitter({ horizontal: true });
-
-  private _bar = new AdRegBar(this);
-  private _editor = new AdRegEditor(this);
-  private _search = new AdRegSearch(this);
-  private _table = new AdRegTable(this);
-
-  private _loader = new AdRegLoader(this);
 
   public constructor(module: AdModule, expect: AdExpect, base: AdRegBase) {
     super();
@@ -48,6 +46,19 @@ export class AdRegister extends QinColumn {
     this._expect = expect;
     this._base = base;
     this._model = new AdRegModel(this);
+
+    this._body = new QinStack();
+    this._viewSingle = new QinStack();
+    this._viewVertical = new QinSplitter({ horizontal: false });
+    this._viewHorizontal = new QinSplitter({ horizontal: true });
+
+    this._bar = new AdRegBar(this);
+    this._editor = new AdRegEditor(this);
+    this._search = new AdRegSearch(this);
+    this._table = new AdRegTable(this);
+
+    this._loader = new AdRegLoader(this);
+
     this._viewSingle.style.putAsFlexMax();
     this._viewVertical.style.putAsFlexMax();
     this._viewHorizontal.style.putAsFlexMax();
@@ -215,6 +226,10 @@ export class AdRegister extends QinColumn {
       .catch((err) => {
         this.displayError(err, "{adcommon}(ErrCode-000013)");
       });
+  }
+
+  public hasScope(scope: AdScope): boolean {
+    return this._expect.scopes.find((s) => s == AdScope.ALL || s == scope) !== undefined;
   }
 
   public tryTurnInsert(): Promise<AdRegTurningInsert> {
