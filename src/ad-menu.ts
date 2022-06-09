@@ -8,7 +8,7 @@ import {
   QinTitled,
   QinTool,
 } from "qinpel-cps";
-import { QinGrandeur, QinWaiters } from "qinpel-res";
+import { QinGrandeur } from "qinpel-res";
 import { AdExpect } from "./ad-expect";
 import { AdNames } from "./ad-names";
 import { AdRegister } from "./ad-register";
@@ -75,9 +75,6 @@ export function menuStartUp(menus: AdMenuItem[]): QinBase {
         let expect = new AdExpect({
           scopes: adSetup.scopes,
           filters: adSetup.filters,
-          waiters: new QinWaiters().addWaiter((result) => {
-            QinTool.qinpel.jobbed.sendWaiters(result);
-          }),
         });
         if (menu.register) {
           return new menu.register(menu.module, expect);

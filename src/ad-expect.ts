@@ -10,7 +10,6 @@ export class AdExpect {
   public constructor(options: AdExpectSet) {
     this._scopes = options.scopes;
     this._filters = options.filters;
-    this._waiters = options.waiters;
   }
 
   public get scopes(): AdScope[] {
@@ -29,5 +28,4 @@ export class AdExpect {
 export type AdExpectSet = {
   scopes: AdScope[];
   filters?: AdFilter[];
-  waiters?: QinWaiters;
 };
