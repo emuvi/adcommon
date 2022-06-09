@@ -13,7 +13,7 @@ import { AdRegSearch } from "./ad-reg-search";
 import { AdRegTable } from "./ad-reg-table";
 import { AdRegistry } from "./ad-registry";
 import { AdSelect } from "./ad-select";
-import { AdModule, AdScope } from "./ad-tools";
+import { AdModule, AdScope, AdTools } from "./ad-tools";
 import { AdTyped } from "./ad-typed";
 
 export class AdRegister extends QinColumn {
@@ -147,6 +147,16 @@ export class AdRegister extends QinColumn {
               });
               let button = new QinButton({ icon: new QinIcon(QinAsset.FaceSearchLink) });
               linkedField.rows.putOn(1, button);
+              button.addActionMain((_) => {
+                let jobber = this.qinpel.chief.newJobber(
+                  join.module.title,
+                  join.module.appName,
+                  AdTools.newAdSetupOption(join.module, [AdScope.RELATE])
+                );
+                jobber.addWaiter((res) => {
+                  console.log(res);
+                });
+              });
             }
           });
         }
