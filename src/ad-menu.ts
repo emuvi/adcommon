@@ -29,7 +29,7 @@ export class AdMenu extends QinColumn {
       button.addActionMain((_) => {
         this.qinpel.chief.newJobber(
           item.module.title,
-          item.module.app,
+          item.module.appName,
           AdTools.newAdSetupOption(item.module, [AdScope.ALL])
         );
         this.qinpel.jobbed.close();

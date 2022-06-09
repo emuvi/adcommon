@@ -18,13 +18,13 @@ export enum AdScope {
 }
 
 export type AdModule = {
-  app: string;
+  appName: string;
   title: string;
   icon: QinAsset;
 };
 
 function isSameModule(one: AdModule, two: AdModule): boolean {
-  return one?.app == two?.app && one?.title == two?.title;
+  return one?.appName == two?.appName && one?.title == two?.title;
 }
 
 function newAdSetup(module: AdModule, scopes: AdScope[], filters?: AdFilter[]): AdSetup {
