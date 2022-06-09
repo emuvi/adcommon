@@ -154,7 +154,8 @@ export class AdRegister extends QinColumn {
                   AdTools.newAdSetupOption(join.module, [AdScope.RELATE])
                 );
                 jobber.addWaiter((res) => {
-                  console.log(res);
+                  let linkedValue = res[filter.linked.with];
+                  linkedField.value = linkedValue;
                 });
               });
             }
