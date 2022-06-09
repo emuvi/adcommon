@@ -265,6 +265,15 @@ export class AdRegister extends QinColumn {
 
   public tryTurnNoticeRow(row: number, values: string[]): Promise<AdRegTurningNotice> {
     return new Promise<AdRegTurningNotice>((resolve, reject) => {
+      if (this._expect.scopes.find((scope) => scope === AdScope.RELATE)) {
+        let selected = {};
+        for (let i = 0; i < this._model.fields.length; i++) {
+          selected[this._model.fields[i].name] = values[i];
+        }
+        this.qinpel.jobbed.sendWaiters(selected);
+        this.qinpel.jobbed.close();
+        return;
+      }
       this.tryTurnMode(AdRegMode.NOTICE)
         .then(() => {
           let turningNotice = {
