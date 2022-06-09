@@ -12,6 +12,7 @@ export enum AdScope {
   ALL = "all",
   INSERT = "insert",
   SEARCH = "search",
+  RELATE = "relate",
   MUTATE = "mutate",
   DELETE = "delete",
 }
