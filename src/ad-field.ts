@@ -1,12 +1,4 @@
-import {
-  QinBase,
-  QinEdit,
-  QinField,
-  QinLabel,
-  QinMutants,
-  QinMutantsArm,
-  QinRows,
-} from "qinpel-cps";
+import { QinBase, QinEdit, QinLabel, QinMutants, QinMutantsArm, QinRows } from "qinpel-cps";
 import { QinWaiter } from "qinpel-res";
 import { AdTyped } from "./ad-typed";
 import { AdValued } from "./ad-valued";
@@ -39,7 +31,9 @@ export class AdField {
   private init() {
     this._rows = new QinRows({ size: 2 });
     this._label = new QinLabel(this._title);
+    this._rows.putOn(0, this._label);
     this._edit = QinMutantsArm.newEdit(this._kind, this._options);
+    this._rows.putOn(1, this._edit);
     this._typed = {
       name: this._name,
       type: this._edit.getNature(),
@@ -116,12 +110,7 @@ export class AdField {
   }
 
   public install(on: QinBase) {
-    if (this._title) {
-      const titled = new QinField(this._title, this._edit);
-      titled.install(on);
-    } else {
-      this._edit.install(on);
-    }
+    this._rows.install(on);
   }
 
   public hasMutations(): boolean {
