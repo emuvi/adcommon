@@ -5,7 +5,7 @@ export class AdModules {
   static BUSINESS: AdModule = {
     appName: "adpeople",
     title: "Negócios",
-    icon: QinAsset.FaceGlobe,
+    icon: QinAsset.FaceBusiness,
   };
   static REGION: AdModule = {
     appName: "adpeople",
@@ -20,31 +20,31 @@ export class AdModules {
   static STATE: AdModule = {
     appName: "adpeople",
     title: "Estados",
-    icon: QinAsset.FaceGlobe,
+    icon: QinAsset.FaceState,
   };
   static CITY: AdModule = {
     appName: "adpeople",
     title: "Cidades",
-    icon: QinAsset.FaceGlobe,
+    icon: QinAsset.FaceCity,
   };
   static DISTRICT: AdModule = {
     appName: "adpeople",
     title: "Bairros",
-    icon: QinAsset.FaceGlobe,
+    icon: QinAsset.FaceDistrict,
   };
   static PEOPLE: AdModule = {
     appName: "adpeople",
     title: "Pessoas",
-    icon: QinAsset.FaceGlobe,
+    icon: QinAsset.FacePeople,
   };
   static PEOPLE_GROUP: AdModule = {
     appName: "adpeople",
     title: "Grupos de Pessoas",
-    icon: QinAsset.FaceGlobe,
+    icon: QinAsset.FacePeopleGroup,
   };
   static PEOPLE_SUBGROUP: AdModule = {
     appName: "adpeople",
     title: "SubGrupos de Pessoas",
-    icon: QinAsset.FaceGlobe,
+    icon: QinAsset.FacePeopleSubgroup,
   };
 }
