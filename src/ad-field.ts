@@ -110,6 +110,11 @@ export class AdField {
     return this._name.substring(0, dotPos);
   }
 
+  public putKey(): AdField {
+    this._key = true;
+    return this;
+  }
+
   public install(on: QinBase) {
     this._rows.install(on);
   }
