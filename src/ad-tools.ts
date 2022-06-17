@@ -79,6 +79,15 @@ function newAdFieldSuggestion(
   });
 }
 
+function newAdFieldDate(name: string, title: string): AdField {
+  return new AdField({
+    key: true,
+    name: name,
+    title: title,
+    kind: QinMutants.DATE,
+  });
+}
+
 function newAdFieldCombo(name: string, title: string, items: QinComboItem[]): AdField {
   return new AdField({
     name: name,
@@ -117,6 +126,7 @@ export const AdTools = {
   newAdSetupOption,
   newAdFieldString,
   newAdFieldSuggestion,
+  newAdFieldDate,
   newAdFieldCombo,
   newAdFieldBoolean,
   newAdFieldAtivo,
