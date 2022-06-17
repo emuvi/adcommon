@@ -150,27 +150,35 @@ export class AdRegister extends QinColumn {
     if (this._base.joins) {
       this._base.joins.forEach((join) => {
         if (join.filters) {
+          let allLinkedFields = new Array<AdField>();
+          let allLinkedWith = new Array<string>();
           join.filters.forEach((filter) => {
             if (filter.linked) {
               let linkedField = this._model.getFieldByName(filter.linked.name);
               linkedField.addOnChanged((_) => {
                 this.updateJoined(join);
               });
-              let button = new QinButton({ icon: new QinIcon(QinAsset.FaceSearchLink) });
-              linkedField.rows.putOn(1, button);
-              button.addActionMain((_) => {
-                let jobber = this.qinpel.chief.newJobber(
-                  join.module.title,
-                  join.module.appName,
-                  AdTools.newAdSetupOption(join.module, [AdScope.RELATE])
-                );
-                jobber.addWaiter((res) => {
-                  let linkedValue = res[filter.linked.with];
-                  linkedField.value = linkedValue;
-                });
-              });
+              allLinkedFields.push(linkedField);
+              allLinkedWith.push(filter.linked.with);
             }
           });
+          if (allLinkedFields.length > 0) {
+            let button = new QinButton({ icon: new QinIcon(QinAsset.FaceSearchLink) });
+            allLinkedFields[allLinkedFields.length - 1].rows.putOn(1, button);
+            button.addActionMain((_) => {
+              let jobber = this.qinpel.chief.newJobber(
+                join.module.title,
+                join.module.appName,
+                AdTools.newAdSetupOption(join.module, [AdScope.RELATE])
+              );
+              jobber.addWaiter((res) => {
+                for (let i = 0; i < allLinkedFields.length; i++) {
+                  let linkedValue = res[allLinkedWith[i]];
+                  allLinkedFields[i].value = linkedValue;
+                }
+              });
+            });
+          }
         }
       });
     }
@@ -220,6 +228,10 @@ export class AdRegister extends QinColumn {
           let row = rows[0];
           for (let i = 0; i < toUpdate.length; i++) {
             toUpdate[i].value = row[i];
+          }
+        } else {
+          for (let i = 0; i < toUpdate.length; i++) {
+            toUpdate[i].value = null;
           }
         }
       })
