@@ -37,7 +37,7 @@ export class AdRegLoader {
         filters.push(...searchingFor);
       }
       let orders = this._reg.base.orders;
-      let select = { registry, fields, joins, filters, orders } as AdSelect;
+      let select = { registry, fields, joins, filters, orders, limit: 300 } as AdSelect;
       QinTool.qinpel.talk
         .post("/reg/ask", select)
         .then((res) => {
