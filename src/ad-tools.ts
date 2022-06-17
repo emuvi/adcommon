@@ -1,4 +1,4 @@
-import { QinAsset, QinComboSet, QinMutants, QinStringSet } from "qinpel-cps";
+import { QinAsset, QinComboItem, QinComboSet, QinMutants, QinStringSet } from "qinpel-cps";
 import { AdField } from "./ad-field";
 import { AdFilter } from "./ad-filter";
 import { AdNames } from "./ad-names";
@@ -55,32 +55,36 @@ function newAdFieldString(name: string, title: string, maxLength: number): AdFie
   });
 }
 
-function newAdFieldAtivo(): AdField {
-  return newAdFieldBoolean("ativo", "Ativo");
-}
-
-function newAdFieldBoolean(name: string, title: string): AdField {
+function newAdFieldCombo(name: string, title: string, items: QinComboItem[]): AdField {
   return new AdField({
     name: name,
     title: title,
     kind: QinMutants.COMBO,
     options: {
-      items: [
-        {
-          title: "",
-          value: "",
-        },
-        {
-          title: "Sim",
-          value: "S",
-        },
-        {
-          title: "Não",
-          value: "N",
-        },
-      ],
+      items: items,
     } as QinComboSet,
   });
+}
+
+function newAdFieldBoolean(name: string, title: string): AdField {
+  return newAdFieldCombo(name, title, [
+    {
+      title: "",
+      value: "",
+    },
+    {
+      title: "Sim",
+      value: "S",
+    },
+    {
+      title: "Não",
+      value: "N",
+    },
+  ]);
+}
+
+function newAdFieldAtivo(): AdField {
+  return newAdFieldBoolean("ativo", "Ativo");
 }
 
 export const AdTools = {
@@ -88,6 +92,7 @@ export const AdTools = {
   newAdSetup,
   newAdSetupOption,
   newAdFieldString,
+  newAdFieldCombo,
   newAdFieldBoolean,
   newAdFieldAtivo,
 };
