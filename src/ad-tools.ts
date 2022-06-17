@@ -56,9 +56,13 @@ function newAdFieldString(name: string, title: string, maxLength: number): AdFie
 }
 
 function newAdFieldAtivo(): AdField {
+  return newAdFieldBoolean("ativo", "Ativo");
+}
+
+function newAdFieldBoolean(name: string, title: string): AdField {
   return new AdField({
-    name: "ativo",
-    title: "Ativo",
+    name: name,
+    title: title,
     kind: QinMutants.COMBO,
     options: {
       items: [
@@ -84,5 +88,6 @@ export const AdTools = {
   newAdSetup,
   newAdSetupOption,
   newAdFieldString,
+  newAdFieldBoolean,
   newAdFieldAtivo,
 };
