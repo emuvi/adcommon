@@ -1,4 +1,11 @@
-import { QinAsset, QinComboItem, QinComboSet, QinMutants, QinStringSet } from "qinpel-cps";
+import {
+  QinAsset,
+  QinComboItem,
+  QinComboSet,
+  QinMutants,
+  QinStringSet,
+  QinSuggestionSet,
+} from "qinpel-cps";
 import { AdField } from "./ad-field";
 import { AdFilter } from "./ad-filter";
 import { AdNames } from "./ad-names";
@@ -55,6 +62,23 @@ function newAdFieldString(name: string, title: string, maxLength: number): AdFie
   });
 }
 
+function newAdFieldSuggestion(
+  name: string,
+  title: string,
+  maxLength: number,
+  items: string[]
+): AdField {
+  return new AdField({
+    name: name,
+    title: title,
+    kind: QinMutants.SUGGESTION,
+    options: {
+      maxLength: maxLength,
+      items: items,
+    } as QinSuggestionSet,
+  });
+}
+
 function newAdFieldCombo(name: string, title: string, items: QinComboItem[]): AdField {
   return new AdField({
     name: name,
@@ -92,6 +116,7 @@ export const AdTools = {
   newAdSetup,
   newAdSetupOption,
   newAdFieldString,
+  newAdFieldSuggestion,
   newAdFieldCombo,
   newAdFieldBoolean,
   newAdFieldAtivo,
